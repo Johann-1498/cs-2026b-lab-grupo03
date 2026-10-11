@@ -1,0 +1,131 @@
+@startuml classes_ecorecicla
+set namespaceSeparator none
+class "AsignadorReciclador" as solicitudes.puertos.AsignadorReciclador {
+  {abstract}asignar(s: Solicitud) -> UUID | None
+}
+class "CuentaPuntos" as puntos.dominio.CuentaPuntos {
+  acreditadas : set[UUID]
+  id : UUID
+  saldo : int
+  vecino_id : UUID
+  acreditar(puntos: int, solicitud_id: UUID) -> None
+}
+class "Distrito" as distritos.dominio.Distrito {
+  activo : bool
+  id : UUID
+  nombre : str
+  tiene_cobertura() -> bool
+}
+class "EstadoSolicitud" as solicitudes.dominio.EstadoSolicitud {
+  name
+}
+class "ItemMaterial" as solicitudes.dominio.ItemMaterial {
+  peso_estimado_kg : Decimal
+  peso_real_kg : Decimal | None
+  tipo
+  registrar_peso_real(kg: Decimal) -> None
+}
+class "Notificador" as solicitudes.puertos.Notificador {
+  {abstract}notificar_asignacion(s: Solicitud) -> None
+  {abstract}notificar_puntos(s: Solicitud, puntos: int) -> None
+}
+class "NotificadorAdapter" as infraestructura.adaptadores.NotificadorAdapter {
+  {abstract}notificar_asignacion(s: Solicitud) -> None
+  {abstract}notificar_puntos(s: Solicitud, puntos: int) -> None
+}
+class "Pesaje" as compartido.tipos.Pesaje {
+  kg : Decimal
+  tipo
+}
+class "Reciclador" as rutas.dominio.Reciclador {
+  asociacion : str
+  disponible : bool
+  distrito_id : UUID
+  id : UUID
+  nombre : str
+  esta_disponible() -> bool
+}
+class "ReglaPuntos" as puntos.reglas.ReglaPuntos {
+  {abstract}aplica_a(distrito_id: UUID) -> bool
+  {abstract}calcular(pesajes: list[Pesaje]) -> int
+}
+class "ReglaPuntosPorKg" as puntos.reglas.ReglaPuntosPorKg {
+  POR_DEFECTO : dict
+  distrito_id : UUID | None
+  puntos_por_kg : dict
+  aplica_a(distrito_id: UUID) -> bool
+  calcular(pesajes: list[Pesaje]) -> int
+}
+class "RepositorioSolicitudes" as solicitudes.puertos.RepositorioSolicitudes {
+  {abstract}buscar(id: UUID) -> Solicitud
+  {abstract}guardar(s: Solicitud) -> None
+  {abstract}listar_por_reciclador(reciclador_id: UUID) -> list[Solicitud]
+}
+class "RepositorioSolicitudesORM" as infraestructura.adaptadores.RepositorioSolicitudesORM {
+  {abstract}buscar(id: UUID) -> Solicitud
+  {abstract}guardar(s: Solicitud) -> None
+  {abstract}listar_por_reciclador(reciclador_id: UUID) -> list[Solicitud]
+}
+class "ServicioDistritos" as distritos.services.ServicioDistritos {
+  verificar_cobertura(distrito_id: UUID) -> bool
+}
+class "ServicioPuntos" as puntos.services.ServicioPuntos {
+  cuentas : dict[UUID, CuentaPuntos]
+  reglas : list[ReglaPuntos]
+  acreditar(vecino_id: UUID, distrito_id: UUID, solicitud_id: UUID, pesajes: list[Pesaje]) -> int
+  consultar_saldo(vecino_id: UUID) -> int
+}
+class "ServicioRutas" as rutas.services.ServicioRutas {
+  asignar(s: Solicitud) -> UUID | None
+  generar_ruta_del_dia(reciclador_id: UUID, fecha: date) -> list[Solicitud]
+}
+class "ServicioSolicitudes" as solicitudes.services.ServicioSolicitudes {
+  cancelar_solicitud(solicitud_id: UUID, motivo: str) -> Solicitud
+  registrar_recojo(solicitud_id: UUID, pesajes: list[Pesaje]) -> Solicitud
+  solicitar_recojo(vecino_id: UUID, distrito_id: UUID, direccion: str, franja: str, materiales: list[Pesaje], latitud: Decimal, longitud: Decimal) -> Solicitud
+}
+class "Solicitud" as solicitudes.dominio.Solicitud {
+  direccion : str
+  distrito_id : UUID
+  estado
+  fecha_registro : datetime
+  franja_horaria : str
+  id : UUID
+  items : list[ItemMaterial]
+  latitud : Decimal
+  longitud : Decimal
+  motivo_cancelacion : str | None
+  reciclador_id : UUID | None
+  vecino_id : UUID
+  agregar_material(tipo: TipoMaterial, peso_estimado_kg: Decimal) -> None
+  asignar(reciclador_id: UUID) -> None
+  cancelar(motivo: str) -> None
+  confirmar_recojo() -> None
+  liberar() -> None
+  marcar_puntos_acreditados() -> None
+  pesajes_reales() -> list[Pesaje]
+  peso_total_real() -> Decimal
+  registrar_pesaje(pesajes: list[Pesaje]) -> None
+}
+class "<color:red>SolicitudInvalida</color>" as solicitudes.services.SolicitudInvalida {
+}
+class "TipoMaterial" as compartido.tipos.TipoMaterial {
+  name
+}
+class "<color:red>TransicionInvalida</color>" as solicitudes.dominio.TransicionInvalida {
+}
+class "Vecino" as solicitudes.dominio.Vecino {
+  celular : str
+  id : UUID
+  nombre : str
+}
+infraestructura.adaptadores.NotificadorAdapter --|> solicitudes.puertos.Notificador
+infraestructura.adaptadores.RepositorioSolicitudesORM --|> solicitudes.puertos.RepositorioSolicitudes
+puntos.reglas.ReglaPuntosPorKg --|> puntos.reglas.ReglaPuntos
+rutas.services.ServicioRutas --|> solicitudes.puertos.AsignadorReciclador
+compartido.tipos.Pesaje --> compartido.tipos.TipoMaterial : tipo
+solicitudes.dominio.ItemMaterial --> compartido.tipos.TipoMaterial : tipo
+puntos.services.ServicioPuntos --> puntos.dominio.CuentaPuntos : cuentas
+solicitudes.dominio.Solicitud --> solicitudes.dominio.EstadoSolicitud : estado
+puntos.reglas.ReglaPuntos --o puntos.services.ServicioPuntos : reglas
+@enduml

@@ -1,0 +1,33 @@
+@startuml paquetes
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam packageStyle rectangle
+skinparam packageBackgroundColor #F7FBF7
+skinparam ArrowColor #1B5E20
+title EcoRecicla AQP — Paquetes del monolito modular (vista de desarrollo, ADR-001/ADR-004)
+package "ecorecicla" {
+  package "solicitudes" as SOL
+  package "rutas" as RUT
+  package "distritos" as DIS
+  package "puntos" as PUN
+  package "reportes" as REP
+  package "compartido" as COM
+  package "infraestructura" as INF
+}
+SOL ..> DIS : usa ServicioDistritos\n.verificarCobertura()
+SOL ..> PUN : usa ServicioPuntos\n.acreditar()
+RUT ..> SOL : realiza AsignadorReciclador\n(puerto) y lee Solicitud
+INF ..> SOL : realiza Notificador y\nRepositorioSolicitudes (puertos)
+REP ..> SOL : solo lectura
+REP ..> RUT : solo lectura
+REP ..> PUN : solo lectura
+REP ..> DIS : solo lectura
+SOL ..> COM : TipoMaterial, Pesaje
+PUN ..> COM : Pesaje
+note bottom of PUN
+  Regla (ADR-001/ADR-004): sin dependencias cíclicas.
+  Los módulos se llaman solo por services.py y puertos.
+  solicitudes NO depende de rutas (rutas realiza el puerto).
+  distritos y puntos NO dependen de solicitudes.
+end note
+@enduml

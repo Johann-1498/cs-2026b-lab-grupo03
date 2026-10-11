@@ -1,0 +1,57 @@
+@startuml packages_ecorecicla
+set namespaceSeparator none
+package "compartido" as compartido {
+}
+package "compartido.tipos" as compartido.tipos {
+}
+package "distritos" as distritos {
+}
+package "distritos.dominio" as distritos.dominio {
+}
+package "distritos.services" as distritos.services {
+}
+package "infraestructura" as infraestructura {
+}
+package "infraestructura.adaptadores" as infraestructura.adaptadores {
+}
+package "puntos" as puntos {
+}
+package "puntos.dominio" as puntos.dominio {
+}
+package "puntos.reglas" as puntos.reglas {
+}
+package "puntos.services" as puntos.services {
+}
+package "rutas" as rutas {
+}
+package "rutas.dominio" as rutas.dominio {
+}
+package "rutas.services" as rutas.services {
+}
+package "solicitudes" as solicitudes {
+}
+package "solicitudes.dominio" as solicitudes.dominio {
+}
+package "solicitudes.puertos" as solicitudes.puertos {
+}
+package "solicitudes.services" as solicitudes.services {
+}
+compartido --> compartido.tipos
+distritos.services --> distritos.dominio
+infraestructura.adaptadores --> solicitudes.dominio
+infraestructura.adaptadores --> solicitudes.puertos
+puntos.reglas --> compartido.tipos
+puntos.services --> compartido.tipos
+puntos.services --> puntos.dominio
+puntos.services --> puntos.reglas
+rutas.services --> rutas.dominio
+rutas.services --> solicitudes.dominio
+rutas.services --> solicitudes.puertos
+solicitudes.dominio --> compartido.tipos
+solicitudes.puertos --> solicitudes.dominio
+solicitudes.services --> compartido.tipos
+solicitudes.services --> distritos.services
+solicitudes.services --> puntos.services
+solicitudes.services --> solicitudes.dominio
+solicitudes.services --> solicitudes.puertos
+@enduml

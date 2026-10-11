@@ -1,0 +1,166 @@
+@startuml clases-solicitudes
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam classBackgroundColor #E8F5E9
+skinparam classBorderColor #2E7D32
+skinparam packageStyle rectangle
+skinparam nodesep 25
+skinparam ranksep 45
+hide empty members
+title EcoRecicla AQP — Diseño detallado: solicitar y atender un recojo (HU-03)
+
+package "compartido" {
+  enum TipoMaterial {
+    PLASTICO
+    PAPEL_CARTON
+    VIDRIO
+    METAL
+  }
+  class Pesaje <<valor>> {
+    - tipo: TipoMaterial
+    - kg: Decimal
+  }
+}
+
+package "solicitudes" {
+  class Vecino {
+    - id: UUID
+    - nombre: String
+    - celular: String
+  }
+  class Solicitud {
+    - id: UUID
+    - distritoId: UUID
+    - direccion: String
+    - latitud: Decimal
+    - longitud: Decimal
+    - franjaHoraria: String
+    - fechaRegistro: DateTime
+    - estado: EstadoSolicitud
+    - recicladorId: UUID
+    + agregarMaterial(tipo: TipoMaterial, pesoEstimadoKg: Decimal): void
+    + asignar(recicladorId: UUID): void
+    + liberar(): void
+    + confirmarRecojo(): void
+    + registrarPesaje(pesajes: List<Pesaje>): void
+    + marcarPuntosAcreditados(): void
+    + cancelar(motivo: String): void
+    + pesoTotalReal(): Decimal
+    + pesajesReales(): List<Pesaje>
+  }
+  class ItemMaterial {
+    - tipo: TipoMaterial
+    - pesoEstimadoKg: Decimal
+    - pesoRealKg: Decimal
+    + registrarPesoReal(kg: Decimal): void
+  }
+  enum EstadoSolicitud {
+    PENDIENTE
+    ASIGNADA
+    RECOGIDA
+    PESADA
+    PUNTOS_ACREDITADOS
+    CANCELADA
+  }
+  class ServicioSolicitudes <<servicio>> {
+    + solicitarRecojo(vecinoId: UUID, distritoId: UUID, direccion: String, franja: String, materiales: List<Pesaje>): Solicitud
+    + registrarRecojo(solicitudId: UUID, pesajes: List<Pesaje>): Solicitud
+    + cancelarSolicitud(solicitudId: UUID, motivo: String): Solicitud
+    - materialesValidos(materiales: List<Pesaje>): bool
+  }
+  interface RepositorioSolicitudes <<puerto>> {
+    + buscar(id: UUID): Solicitud
+    + guardar(s: Solicitud): void
+    + listarPorReciclador(recicladorId: UUID): List<Solicitud>
+  }
+  interface Notificador <<puerto>> {
+    + notificarAsignacion(s: Solicitud): void
+    + notificarPuntos(s: Solicitud, puntos: int): void
+  }
+  interface AsignadorReciclador <<puerto>> {
+    + asignar(s: Solicitud): UUID
+  }
+}
+
+package "rutas" {
+  class Reciclador {
+    - id: UUID
+    - nombre: String
+    - asociacion: String
+    - distritoId: UUID
+    - disponible: bool
+    + estaDisponible(): bool
+  }
+  class ServicioRutas <<servicio>> {
+    + asignar(s: Solicitud): UUID
+    + generarRutaDelDia(recicladorId: UUID, fecha: Date): List<Solicitud>
+  }
+}
+
+package "distritos" {
+  class Distrito {
+    - id: UUID
+    - nombre: String
+    - activo: bool
+    + tieneCobertura(): bool
+  }
+  class ServicioDistritos <<servicio>> {
+    + verificarCobertura(distritoId: UUID): bool
+  }
+}
+
+package "puntos" {
+  class CuentaPuntos {
+    - id: UUID
+    - vecinoId: UUID
+    - saldo: int
+    - acreditadas: Set<UUID>
+    + acreditar(puntos: int, solicitudId: UUID): void
+  }
+  interface ReglaPuntos <<estrategia>> {
+    + aplicaA(distritoId: UUID): bool
+    + calcular(pesajes: List<Pesaje>): int
+  }
+  class ReglaPuntosPorKg {
+    - distritoId: UUID
+    - puntosPorKg: Map<TipoMaterial, int>
+  }
+  class ServicioPuntos <<servicio>> {
+    + acreditar(vecinoId: UUID, distritoId: UUID, solicitudId: UUID, pesajes: List<Pesaje>): int
+    + consultarSaldo(vecinoId: UUID): int
+  }
+}
+
+package "infraestructura" {
+  class NotificadorAdapter <<adaptador>>
+  class RepositorioSolicitudesORM <<adaptador>>
+}
+
+' --- relaciones del dominio -------------------------------------------------
+Vecino "1" -- "0..*" Solicitud : realiza >
+Solicitud "1" *-- "1..*" ItemMaterial : contiene
+Solicitud "0..*" --> "1" EstadoSolicitud : estado
+ItemMaterial "0..*" --> "1" TipoMaterial
+Pesaje "0..*" --> "1" TipoMaterial
+ServicioPuntos "1" o-- "1..*" ReglaPuntos : reglas
+ServicioPuntos "1" -- "0..*" CuentaPuntos : administra >
+ServicioRutas "1" -- "0..*" Reciclador : gestiona >
+ServicioDistritos "1" -- "0..*" Distrito : consulta >
+
+' --- puertos y adaptadores (ADR-001, ADR-004) -------------------------------
+RepositorioSolicitudes <|.. RepositorioSolicitudesORM
+Notificador <|.. NotificadorAdapter
+AsignadorReciclador <|.. ServicioRutas
+ReglaPuntos <|.. ReglaPuntosPorKg
+
+' --- dependencias de uso ----------------------------------------------------
+ServicioSolicitudes ..> Solicitud
+ServicioSolicitudes ..> RepositorioSolicitudes
+ServicioSolicitudes ..> Notificador
+ServicioSolicitudes ..> AsignadorReciclador
+ServicioSolicitudes ..> ServicioDistritos
+ServicioSolicitudes ..> ServicioPuntos
+Solicitud ..> Pesaje
+ReglaPuntos ..> Pesaje
+@enduml

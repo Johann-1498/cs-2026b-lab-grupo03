@@ -1,0 +1,44 @@
+@startuml actividades-ruta-reciclador
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ActivityBackgroundColor #E8F5E9
+skinparam ActivityBorderColor #2E7D32
+skinparam ArrowColor #1B5E20
+title EcoRecicla AQP — Actividad: ruta diaria del reciclador
+|Sistema|
+start
+:Genera la ruta del día\n(solicitudes ASIGNADAS por franja horaria);
+:Notifica al reciclador que su ruta está lista;
+|Reciclador|
+:Revisa la ruta y sale a campo;
+repeat
+  :Llega al domicilio de la parada;
+  if (¿Vecino ausente o sin material?) then (sí)
+    :Marca la parada como "no recolectada";
+    |Sistema|
+    :Libera la solicitud (vuelve a PENDIENTE);
+  else (no)
+    |Vecino|
+    :Entrega el material clasificado;
+    |Reciclador|
+    :Pesa cada tipo de material;
+    :Registra el recojo y el pesaje (≤ 4 toques);
+    |Sistema|
+    if (¿Hay conexión?) then (sí)
+      :Valida el pesaje y confirma el recojo;
+    else (no)
+      :Encola el registro en el celular\ny lo sincroniza al recuperar señal;
+    endif
+    fork
+      :Acredita los puntos según\nla regla del distrito;
+    fork again
+      :Notifica los puntos al vecino;
+    end fork
+  endif
+  |Reciclador|
+repeat while (¿Quedan paradas en la ruta?) is (sí) not (no)
+:Cierra la jornada;
+|Sistema|
+:Consolida los kg del día para los reportes;
+stop
+@enduml

@@ -1,0 +1,17 @@
+stateDiagram-v2
+    [*] --> PENDIENTE : solicitarRecojo() [distrito con cobertura y al menos 1 material]
+    PENDIENTE --> ASIGNADA : asignar() [reciclador disponible]
+    PENDIENTE --> CANCELADA : cancelar()
+    ASIGNADA --> RECOGIDA : confirmarRecojo()
+    ASIGNADA --> PENDIENTE : liberar() [vecino ausente o no recolectada]
+    ASIGNADA --> CANCELADA : cancelar()
+    RECOGIDA --> PESADA : registrarPesaje() [pesaje con al menos 1 material]
+    PESADA --> PUNTOS_ACREDITADOS : marcarPuntosAcreditados() [puntos calculados]
+    PUNTOS_ACREDITADOS --> [*]
+    CANCELADA --> [*]
+    note right of ASIGNADA
+        Al entrar: notificarAsignacion()
+    end note
+    note right of PESADA
+        Al salir: ServicioPuntos.acreditar()
+    end note

@@ -1,0 +1,1 @@
+"""Módulo Distritos y Cobertura."""

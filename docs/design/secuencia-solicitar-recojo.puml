@@ -1,0 +1,46 @@
+@startuml secuencia-solicitar-recojo
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam sequenceMessageAlign center
+autonumber
+actor Vecino
+participant "PWA" as UI
+participant "SolicitudController" as C
+participant "ServicioSolicitudes" as S
+participant "ServicioDistritos" as D
+participant "Solicitud" as P
+participant "RepositorioSolicitudes" as R
+participant "ServicioRutas\n(AsignadorReciclador)" as A
+participant "Notificador" as N
+
+Vecino -> UI : Completa dirección, materiales y franja
+UI -> C : POST /api/solicitudes
+C -> S : solicitarRecojo(vecinoId, distritoId, direccion, franja, materiales)
+S -> S : materialesValidos(materiales)
+S -> D : verificarCobertura(distritoId)
+D --> S : cobertura
+alt materiales válidos y distrito con cobertura
+  create P
+  S -> P : <<create>>
+  loop por cada material declarado
+    S -> P : agregarMaterial(tipo, pesoEstimadoKg)
+  end
+  S -> R : guardar(solicitud)
+  note right of R : estado = PENDIENTE
+  S -> A : asignar(solicitud)
+  A --> S : recicladorId
+  opt hay reciclador disponible
+    S -> P : asignar(recicladorId)
+    note right of P : estado = ASIGNADA
+    S -> R : guardar(solicitud)
+    S ->> N : notificarAsignacion(solicitud)
+    note right of N : asíncrono\n(no bloquea la respuesta)
+  end
+  S --> C : solicitud
+  C --> UI : 201 Created
+else sin cobertura o sin materiales
+  S --> C : SolicitudInvalida (no se crea)
+  C --> UI : 422 Unprocessable Entity
+end
+UI --> Vecino : Muestra el resultado
+@enduml

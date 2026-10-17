@@ -1,0 +1,47 @@
+@startuml
+title <size:24>Container View: EcoRecicla AQP</size>\n<size:24>Nivel 2: contenedores de EcoRecicla AQP.</size>
+
+set separator none
+left to right direction
+
+<style>
+  root {
+    BackgroundColor: #ffffff
+    FontColor: #444444
+  }
+</style>
+
+!include <C4/C4>
+!include <C4/C4_Context>
+!include <C4/C4_Container>
+
+Person(Vecino, "Vecino", $descr="Solicita el recojo de sus reciclables y acumula puntos ecológicos.", $tags="", $link="")
+Person(Reciclador, "Reciclador", $descr="Reciclador formalizado: recorre su ruta diaria, recoge y pesa el material.", $tags="", $link="")
+Person(Administradormunicipal, "Administrador municipal", $descr="Gestiona distritos y asociaciones de recicladores y consulta reportes de toneladas.", $tags="", $link="")
+System_Ext(Serviciodenotificaciones, "Servicio de notificaciones", $descr="Entrega avisos de asignación y de puntos a vecinos y recicladores.", $tags="", $link="")
+System_Ext(Sistemadeincentivosmunicipales, "Sistema de incentivos municipales", $descr="Gestiona los beneficios que los vecinos canjean con sus puntos.", $tags="", $link="")
+
+System_Boundary("EcoReciclaAQP_boundary", "EcoRecicla AQP", $tags="") {
+  Container(EcoReciclaAQP.Workerdetareas, "Worker de tareas", $techn="Celery", $descr="Ejecuta de forma asíncrona los reportes y el envío de notificaciones, con reintentos.", $tags="", $link="")
+  ContainerDb(EcoReciclaAQP.Basededatos, "Base de datos", $techn="PostgreSQL", $descr="Solicitudes, rutas, puntos, distritos y reportes (esquemas modulares, ADR-002).", $tags="", $link="")
+  ContainerQueue(EcoReciclaAQP.Colaycaché, "Cola y caché", $techn="Redis", $descr="Cola de tareas del worker y caché de consultas.", $tags="", $link="")
+  Container(EcoReciclaAQP.Aplicaciónwebdevecinosymunicipalidad, "Aplicación web de vecinos y municipalidad", $techn="Aplicación web (navegador)", $descr="Interfaz para solicitar recojos, consultar puntos, gestionar distritos y descargar reportes.", $tags="", $link="")
+  Container(EcoReciclaAQP.PWAdelreciclador, "PWA del reciclador", $techn="Progressive Web App (Service Worker)", $descr="Ruta del día y registro de recojo y pesaje en 4 toques o menos; guarda los registros en el celular si no hay señal 3G.", $tags="", $link="")
+  Container(EcoReciclaAQP.APIEcoRecicla, "API EcoRecicla", $techn="Python / Django REST Framework / simplejwt", $descr="Monolito modular que implementa los casos de uso mediante una API REST con autenticación JWT (ADR-001, ADR-003).", $tags="", $link="")
+}
+
+Rel(Vecino, EcoReciclaAQP.Aplicaciónwebdevecinosymunicipalidad, "Solicita recojos y consulta sus puntos", $techn="HTTPS", $tags="", $link="")
+Rel(Administradormunicipal, EcoReciclaAQP.Aplicaciónwebdevecinosymunicipalidad, "Gestiona distritos y descarga reportes", $techn="HTTPS", $tags="", $link="")
+Rel(Reciclador, EcoReciclaAQP.PWAdelreciclador, "Consulta su ruta y registra recojos, con o sin conexión", $techn="HTTPS", $tags="", $link="")
+Rel(EcoReciclaAQP.Aplicaciónwebdevecinosymunicipalidad, EcoReciclaAQP.APIEcoRecicla, "Llama a", $techn="HTTPS/JSON (REST + JWT)", $tags="", $link="")
+Rel(EcoReciclaAQP.PWAdelreciclador, EcoReciclaAQP.APIEcoRecicla, "Consulta rutas y envía pesajes", $techn="HTTPS/JSON (REST + JWT)", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla, EcoReciclaAQP.Basededatos, "Lee y escribe", $techn="SQL/TCP", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla, EcoReciclaAQP.Colaycaché, "Encola tareas y lee caché", $techn="Redis protocol", $tags="", $link="")
+Rel(EcoReciclaAQP.Workerdetareas, EcoReciclaAQP.Colaycaché, "Consume tareas", $techn="Redis protocol", $tags="", $link="")
+Rel(EcoReciclaAQP.Workerdetareas, EcoReciclaAQP.Basededatos, "Lee datos y guarda reportes", $techn="SQL/TCP", $tags="", $link="")
+Rel(EcoReciclaAQP.Workerdetareas, Serviciodenotificaciones, "Envía mensajes", $techn="HTTPS/JSON", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla, Sistemadeincentivosmunicipales, "Registra canjes de puntos", $techn="HTTPS/JSON", $tags="", $link="")
+
+SHOW_LEGEND(true)
+hide stereotypes
+@enduml

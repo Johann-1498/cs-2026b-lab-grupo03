@@ -1,0 +1,57 @@
+graph LR
+  linkStyle default fill:#ffffff
+
+  subgraph diagram ["Deployment View: EcoRecicla AQP - Producción"]
+    style diagram fill:#ffffff,stroke:#ffffff
+
+    subgraph 61 ["Navegador del vecino o de la municipalidad"]
+      style 61 fill:#ffffff,stroke:#444444,color:#444444
+
+      62["<div style='font-weight: bold'>Aplicación web de vecinos y municipalidad</div><div style='font-size: 70%; margin-top: 0px'>[Container: Aplicación web (navegador)]</div><div style='font-size: 80%; margin-top:10px'>Interfaz para solicitar<br />recojos, consultar puntos,<br />gestionar distritos y<br />descargar reportes.</div>"]
+      style 62 fill:#438dd5,stroke:#2e6295,color:#ffffff
+    end
+
+    subgraph 63 ["Celular del reciclador"]
+      style 63 fill:#ffffff,stroke:#444444,color:#444444
+
+      64["<div style='font-weight: bold'>PWA del reciclador</div><div style='font-size: 70%; margin-top: 0px'>[Container: Progressive Web App (Service Worker)]</div><div style='font-size: 80%; margin-top:10px'>Ruta del día y registro de<br />recojo y pesaje en 4 toques o<br />menos; guarda los registros<br />en el celular si no hay señal<br />3G.</div>"]
+      style 64 fill:#438dd5,stroke:#2e6295,color:#ffffff
+    end
+
+    subgraph 65 ["VPS"]
+      style 65 fill:#ffffff,stroke:#444444,color:#444444
+
+      66["<div style='font-weight: bold'>Nginx</div><div style='font-size: 70%; margin-top: 0px'>[Infrastructure Node: Nginx]</div><div style='font-size: 80%; margin-top:10px'>Proxy inverso y terminación<br />HTTPS.</div>"]
+      style 66 fill:#ffffff,stroke:#444444,color:#444444
+      subgraph 67 ["Monolito modular"]
+        style 67 fill:#ffffff,stroke:#444444,color:#444444
+
+        68["<div style='font-weight: bold'>API EcoRecicla</div><div style='font-size: 70%; margin-top: 0px'>[Container: Python / Django REST Framework / simplejwt]</div><div style='font-size: 80%; margin-top:10px'>Monolito modular que<br />implementa los casos de uso<br />mediante una API REST con<br />autenticación JWT (ADR-001,<br />ADR-003).</div>"]
+        style 68 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        71["<div style='font-weight: bold'>Worker de tareas</div><div style='font-size: 70%; margin-top: 0px'>[Container: Celery]</div><div style='font-size: 80%; margin-top:10px'>Ejecuta de forma asíncrona<br />los reportes y el envío de<br />notificaciones, con<br />reintentos.</div>"]
+        style 71 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        72["<div style='font-weight: bold'>Cola y caché</div><div style='font-size: 70%; margin-top: 0px'>[Container: Redis]</div><div style='font-size: 80%; margin-top:10px'>Cola de tareas del worker y<br />caché de consultas.</div>"]
+        style 72 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      end
+
+      subgraph 75 ["Servidor de base de datos"]
+        style 75 fill:#ffffff,stroke:#444444,color:#444444
+
+        76[("<div style='font-weight: bold'>Base de datos</div><div style='font-size: 70%; margin-top: 0px'>[Container: PostgreSQL]</div><div style='font-size: 80%; margin-top:10px'>Solicitudes, rutas, puntos,<br />distritos y reportes<br />(esquemas modulares,<br />ADR-002).</div>")]
+        style 76 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      end
+
+      79["<div style='font-weight: bold'>Monitoreo</div><div style='font-size: 70%; margin-top: 0px'>[Infrastructure Node: Prometheus / logs]</div><div style='font-size: 80%; margin-top:10px'>Métricas y registros del VPS.</div>"]
+      style 79 fill:#ffffff,stroke:#444444,color:#444444
+    end
+
+    68-. "<div>Encola tareas y lee caché</div><div style='font-size: 70%'>[Redis protocol]</div>" .->72
+    71-. "<div>Consume tareas</div><div style='font-size: 70%'>[Redis protocol]</div>" .->72
+    68-. "<div>Lee y escribe</div><div style='font-size: 70%'>[SQL/TCP]</div>" .->76
+    71-. "<div>Lee datos y guarda reportes</div><div style='font-size: 70%'>[SQL/TCP]</div>" .->76
+    62-. "<div>Llama a</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->66
+    64-. "<div>Llama a</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->66
+    66-. "<div>Reenvía las peticiones</div><div style='font-size: 70%'>[HTTP]</div>" .->68
+    68-. "<div>Envía métricas y registros</div><div style='font-size: 70%'>[HTTP]</div>" .->79
+
+  end

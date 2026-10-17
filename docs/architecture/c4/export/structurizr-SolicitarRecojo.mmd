@@ -1,0 +1,52 @@
+graph LR
+  linkStyle default fill:#ffffff
+
+  subgraph diagram ["Dynamic View: EcoRecicla AQP - API EcoRecicla"]
+    style diagram fill:#ffffff,stroke:#ffffff
+
+    18["<div style='font-weight: bold'>Servicio de notificaciones</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Entrega avisos de asignación<br />y de puntos a vecinos y<br />recicladores.</div>"]
+    style 18 fill:#999999,stroke:#6b6b6b,color:#ffffff
+
+    subgraph 4 ["EcoRecicla AQP"]
+      style 4 fill:#ffffff,stroke:#0b4884,color:#0b4884
+
+      subgraph 7 ["API EcoRecicla"]
+        style 7 fill:#ffffff,stroke:#2e6295,color:#2e6295
+
+        10["<div style='font-weight: bold'>Módulo Distritos</div><div style='font-size: 70%; margin-top: 0px'>[Component: Django app]</div><div style='font-size: 80%; margin-top:10px'>Gestiona distritos, sectores<br />de cobertura y asociaciones<br />de recicladores.</div>"]
+        style 10 fill:#85bbf0,stroke:#5d82a8,color:#000000
+        14["<div style='font-weight: bold'>Adaptadores de infraestructura</div><div style='font-size: 70%; margin-top: 0px'>[Component: Paquete Python / Django ORM]</div><div style='font-size: 80%; margin-top:10px'>Implementan los puertos:<br />repositorio de solicitudes<br />(ORM), notificador e<br />incentivos.</div>"]
+        style 14 fill:#85bbf0,stroke:#5d82a8,color:#000000
+        8["<div style='font-weight: bold'>Módulo Solicitudes</div><div style='font-size: 70%; margin-top: 0px'>[Component: Django app]</div><div style='font-size: 80%; margin-top:10px'>Registra solicitudes de<br />recojo y gestiona su ciclo de<br />vida (PENDIENTE a<br />PUNTOS_ACREDITADOS).</div>"]
+        style 8 fill:#85bbf0,stroke:#5d82a8,color:#000000
+        9["<div style='font-weight: bold'>Módulo Rutas</div><div style='font-size: 70%; margin-top: 0px'>[Component: Django app]</div><div style='font-size: 80%; margin-top:10px'>Asigna recicladores (realiza<br />el puerto<br />AsignadorReciclador) y genera<br />la ruta del día.</div>"]
+        style 9 fill:#85bbf0,stroke:#5d82a8,color:#000000
+      end
+
+      15["<div style='font-weight: bold'>Worker de tareas</div><div style='font-size: 70%; margin-top: 0px'>[Container: Celery]</div><div style='font-size: 80%; margin-top:10px'>Ejecuta de forma asíncrona<br />los reportes y el envío de<br />notificaciones, con<br />reintentos.</div>"]
+      style 15 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      17["<div style='font-weight: bold'>Cola y caché</div><div style='font-size: 70%; margin-top: 0px'>[Container: Redis]</div><div style='font-size: 80%; margin-top:10px'>Cola de tareas del worker y<br />caché de consultas.</div>"]
+      style 17 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      5["<div style='font-weight: bold'>Aplicación web de vecinos y municipalidad</div><div style='font-size: 70%; margin-top: 0px'>[Container: Aplicación web (navegador)]</div><div style='font-size: 80%; margin-top:10px'>Interfaz para solicitar<br />recojos, consultar puntos,<br />gestionar distritos y<br />descargar reportes.</div>"]
+      style 5 fill:#438dd5,stroke:#2e6295,color:#ffffff
+    end
+
+    5["<div style='font-weight: bold'>Aplicación web de vecinos y municipalidad</div><div style='font-size: 70%; margin-top: 0px'>[Container: Aplicación web (navegador)]</div><div style='font-size: 80%; margin-top:10px'>Interfaz para solicitar<br />recojos, consultar puntos,<br />gestionar distritos y<br />descargar reportes.</div>"]
+    style 5 fill:#438dd5,stroke:#2e6295,color:#ffffff
+    15["<div style='font-weight: bold'>Worker de tareas</div><div style='font-size: 70%; margin-top: 0px'>[Container: Celery]</div><div style='font-size: 80%; margin-top:10px'>Ejecuta de forma asíncrona<br />los reportes y el envío de<br />notificaciones, con<br />reintentos.</div>"]
+    style 15 fill:#438dd5,stroke:#2e6295,color:#ffffff
+    17["<div style='font-weight: bold'>Cola y caché</div><div style='font-size: 70%; margin-top: 0px'>[Container: Redis]</div><div style='font-size: 80%; margin-top:10px'>Cola de tareas del worker y<br />caché de consultas.</div>"]
+    style 17 fill:#438dd5,stroke:#2e6295,color:#ffffff
+    18["<div style='font-weight: bold'>Servicio de notificaciones</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Entrega avisos de asignación<br />y de puntos a vecinos y<br />recicladores.</div>"]
+    style 18 fill:#999999,stroke:#6b6b6b,color:#ffffff
+
+    5-. "<div>1. POST /api/solicitudes</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->8
+    8-. "<div>2. Verifica la cobertura</div><div style='font-size: 70%'></div>" .->10
+    8-. "<div>3. Guarda la solicitud<br />(PENDIENTE)</div><div style='font-size: 70%'></div>" .->14
+    8-. "<div>4. Pide asignar un reciclador</div><div style='font-size: 70%'></div>" .->9
+    8-. "<div>5. Guarda la asignación<br />(ASIGNADA)</div><div style='font-size: 70%'></div>" .->14
+    14-. "<div>6. Encola la notificación<br />(asíncrono)</div><div style='font-size: 70%'>[Redis protocol]</div>" .->17
+    15-. "<div>7. Toma la tarea de<br />notificación</div><div style='font-size: 70%'>[Redis protocol]</div>" .->17
+    15-. "<div>8. Envía el aviso de<br />asignación</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->18
+
+  end

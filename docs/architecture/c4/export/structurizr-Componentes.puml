@@ -1,0 +1,66 @@
+@startuml
+title <size:24>Component View: EcoRecicla AQP - API EcoRecicla</size>\n<size:24>Nivel 3: módulos de la API (coinciden con docs/design/paquetes.puml).</size>
+
+set separator none
+left to right direction
+
+<style>
+  root {
+    BackgroundColor: #ffffff
+    FontColor: #444444
+  }
+</style>
+
+!include <C4/C4>
+!include <C4/C4_Context>
+!include <C4/C4_Container>
+!include <C4/C4_Component>
+
+System_Ext(Sistemadeincentivosmunicipales, "Sistema de incentivos municipales", $descr="Gestiona los beneficios que los vecinos canjean con sus puntos.", $tags="", $link="")
+
+System_Boundary("EcoReciclaAQP_boundary", "EcoRecicla AQP", $tags="") {
+  Container_Boundary("EcoReciclaAQP.APIEcoRecicla_boundary", "API EcoRecicla", $tags="") {
+    Component(EcoReciclaAQP.APIEcoRecicla.MóduloDistritos, "Módulo Distritos", $techn="Django app", $descr="Gestiona distritos, sectores de cobertura y asociaciones de recicladores.", $tags="", $link="")
+    Component(EcoReciclaAQP.APIEcoRecicla.MóduloPuntos, "Módulo Puntos", $techn="Django app", $descr="Calcula y acredita puntos con una regla por distrito (patrón Strategy).", $tags="", $link="")
+    Component(EcoReciclaAQP.APIEcoRecicla.MóduloReportes, "Módulo Reportes", $techn="Django app", $descr="Reportes consolidados de toneladas por distrito, material, reciclador y fechas.", $tags="", $link="")
+    Component(EcoReciclaAQP.APIEcoRecicla.Núcleocompartido, "Núcleo compartido", $techn="Paquete Python", $descr="Tipos de valor comunes: TipoMaterial y Pesaje.", $tags="", $link="")
+    Component(EcoReciclaAQP.APIEcoRecicla.Adaptadoresdeinfraestructura, "Adaptadores de infraestructura", $techn="Paquete Python / Django ORM", $descr="Implementan los puertos: repositorio de solicitudes (ORM), notificador e incentivos.", $tags="", $link="")
+    Component(EcoReciclaAQP.APIEcoRecicla.MóduloSolicitudes, "Módulo Solicitudes", $techn="Django app", $descr="Registra solicitudes de recojo y gestiona su ciclo de vida (PENDIENTE a PUNTOS_ACREDITADOS).", $tags="", $link="")
+    Component(EcoReciclaAQP.APIEcoRecicla.MóduloRutas, "Módulo Rutas", $techn="Django app", $descr="Asigna recicladores (realiza el puerto AsignadorReciclador) y genera la ruta del día.", $tags="", $link="")
+  }
+
+  ContainerDb(EcoReciclaAQP.Basededatos, "Base de datos", $techn="PostgreSQL", $descr="Solicitudes, rutas, puntos, distritos y reportes (esquemas modulares, ADR-002).", $tags="", $link="")
+  ContainerQueue(EcoReciclaAQP.Colaycaché, "Cola y caché", $techn="Redis", $descr="Cola de tareas del worker y caché de consultas.", $tags="", $link="")
+  Container(EcoReciclaAQP.Aplicaciónwebdevecinosymunicipalidad, "Aplicación web de vecinos y municipalidad", $techn="Aplicación web (navegador)", $descr="Interfaz para solicitar recojos, consultar puntos, gestionar distritos y descargar reportes.", $tags="", $link="")
+  Container(EcoReciclaAQP.PWAdelreciclador, "PWA del reciclador", $techn="Progressive Web App (Service Worker)", $descr="Ruta del día y registro de recojo y pesaje en 4 toques o menos; guarda los registros en el celular si no hay señal 3G.", $tags="", $link="")
+}
+
+Rel(EcoReciclaAQP.Aplicaciónwebdevecinosymunicipalidad, EcoReciclaAQP.APIEcoRecicla.MóduloSolicitudes, "Registra y consulta solicitudes", $techn="HTTPS/JSON", $tags="", $link="")
+Rel(EcoReciclaAQP.Aplicaciónwebdevecinosymunicipalidad, EcoReciclaAQP.APIEcoRecicla.MóduloPuntos, "Consulta su saldo de puntos", $techn="HTTPS/JSON", $tags="", $link="")
+Rel(EcoReciclaAQP.Aplicaciónwebdevecinosymunicipalidad, EcoReciclaAQP.APIEcoRecicla.MóduloDistritos, "Gestiona distritos y cobertura", $techn="HTTPS/JSON", $tags="", $link="")
+Rel(EcoReciclaAQP.Aplicaciónwebdevecinosymunicipalidad, EcoReciclaAQP.APIEcoRecicla.MóduloReportes, "Descarga reportes", $techn="HTTPS/JSON", $tags="", $link="")
+Rel(EcoReciclaAQP.PWAdelreciclador, EcoReciclaAQP.APIEcoRecicla.MóduloRutas, "Consulta la ruta del día", $techn="HTTPS/JSON", $tags="", $link="")
+Rel(EcoReciclaAQP.PWAdelreciclador, EcoReciclaAQP.APIEcoRecicla.MóduloSolicitudes, "Registra recojo y pesaje", $techn="HTTPS/JSON", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla.MóduloSolicitudes, EcoReciclaAQP.APIEcoRecicla.MóduloDistritos, "Verifica la cobertura del distrito", $techn="", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla.MóduloSolicitudes, EcoReciclaAQP.APIEcoRecicla.MóduloRutas, "Pide asignar un reciclador (puerto AsignadorReciclador)", $techn="", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla.MóduloSolicitudes, EcoReciclaAQP.APIEcoRecicla.MóduloPuntos, "Acredita los puntos del pesaje", $techn="", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla.MóduloSolicitudes, EcoReciclaAQP.APIEcoRecicla.Núcleocompartido, "Usa TipoMaterial y Pesaje", $techn="", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla.MóduloPuntos, EcoReciclaAQP.APIEcoRecicla.Núcleocompartido, "Usa Pesaje", $techn="", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla.MóduloSolicitudes, EcoReciclaAQP.APIEcoRecicla.Adaptadoresdeinfraestructura, "Guarda y busca solicitudes (puerto RepositorioSolicitudes)", $techn="", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla.MóduloSolicitudes, EcoReciclaAQP.APIEcoRecicla.Adaptadoresdeinfraestructura, "Pide notificar (puerto Notificador)", $techn="", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla.MóduloRutas, EcoReciclaAQP.APIEcoRecicla.Adaptadoresdeinfraestructura, "Lee las solicitudes asignadas (puerto RepositorioSolicitudes)", $techn="", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla.MóduloReportes, EcoReciclaAQP.APIEcoRecicla.MóduloSolicitudes, "Lee solicitudes (solo lectura)", $techn="", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla.MóduloReportes, EcoReciclaAQP.APIEcoRecicla.MóduloRutas, "Lee recicladores y rutas (solo lectura)", $techn="", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla.MóduloReportes, EcoReciclaAQP.APIEcoRecicla.MóduloPuntos, "Lee puntos (solo lectura)", $techn="", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla.MóduloReportes, EcoReciclaAQP.APIEcoRecicla.MóduloDistritos, "Lee distritos (solo lectura)", $techn="", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla.MóduloReportes, EcoReciclaAQP.Colaycaché, "Encola la generación del reporte", $techn="Redis protocol", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla.MóduloRutas, EcoReciclaAQP.Basededatos, "Lee y escribe sus tablas", $techn="SQL/TCP", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla.MóduloDistritos, EcoReciclaAQP.Basededatos, "Lee y escribe sus tablas", $techn="SQL/TCP", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla.MóduloPuntos, EcoReciclaAQP.Basededatos, "Lee y escribe sus tablas", $techn="SQL/TCP", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla.Adaptadoresdeinfraestructura, EcoReciclaAQP.Basededatos, "Lee y escribe las solicitudes", $techn="SQL/TCP", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla.Adaptadoresdeinfraestructura, EcoReciclaAQP.Colaycaché, "Encola las notificaciones (asíncrono)", $techn="Redis protocol", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla.Adaptadoresdeinfraestructura, Sistemadeincentivosmunicipales, "Registra canjes de puntos", $techn="HTTPS/JSON", $tags="", $link="")
+
+SHOW_LEGEND(true)
+hide stereotypes
+@enduml

@@ -1,0 +1,53 @@
+@startuml
+title <size:24>Deployment View: EcoRecicla AQP - Producción</size>\n<size:24>Despliegue en producción (MVP en un único VPS).</size>
+
+set separator none
+left to right direction
+
+<style>
+  root {
+    BackgroundColor: #ffffff
+    FontColor: #444444
+  }
+</style>
+
+!include <C4/C4>
+!include <C4/C4_Context>
+!include <C4/C4_Container>
+!include <C4/C4_Deployment>
+
+Deployment_Node(Producción.Navegadordelvecinoodelamunicipalidad, "Navegador del vecino o de la municipalidad", $type="Navegador web (PC o celular)", $descr="", $tags="", $link="") {
+  Container(Producción.Navegadordelvecinoodelamunicipalidad.Aplicaciónwebdevecinosymunicipalidad_1, "Aplicación web de vecinos y municipalidad", $techn="Aplicación web (navegador)", $descr="Interfaz para solicitar recojos, consultar puntos, gestionar distritos y descargar reportes.", $tags="", $link="")
+}
+
+Deployment_Node(Producción.Celulardelreciclador, "Celular del reciclador", $type="Android de gama de entrada, 3G", $descr="", $tags="", $link="") {
+  Container(Producción.Celulardelreciclador.PWAdelreciclador_1, "PWA del reciclador", $techn="Progressive Web App (Service Worker)", $descr="Ruta del día y registro de recojo y pesaje en 4 toques o menos; guarda los registros en el celular si no hay señal 3G.", $tags="", $link="")
+}
+
+Deployment_Node(Producción.VPS, "VPS", $type="Linux, 2 vCPU, 4 GB RAM", $descr="Servidor privado virtual básico (R-03)", $tags="", $link="") {
+  Deployment_Node(Producción.VPS.Nginx, "Nginx", $type="Nginx", $descr="Proxy inverso y terminación HTTPS.", $tags="", $link="")
+  Deployment_Node(Producción.VPS.Monolitomodular, "Monolito modular", $type="Python / Django", $descr="", $tags="", $link="") {
+    Container(Producción.VPS.Monolitomodular.APIEcoRecicla_1, "API EcoRecicla", $techn="Python / Django REST Framework / simplejwt", $descr="Monolito modular que implementa los casos de uso mediante una API REST con autenticación JWT (ADR-001, ADR-003).", $tags="", $link="")
+    Container(Producción.VPS.Monolitomodular.Workerdetareas_1, "Worker de tareas", $techn="Celery", $descr="Ejecuta de forma asíncrona los reportes y el envío de notificaciones, con reintentos.", $tags="", $link="")
+    ContainerQueue(Producción.VPS.Monolitomodular.Colaycaché_1, "Cola y caché", $techn="Redis", $descr="Cola de tareas del worker y caché de consultas.", $tags="", $link="")
+  }
+
+  Deployment_Node(Producción.VPS.Servidordebasededatos, "Servidor de base de datos", $type="PostgreSQL", $descr="", $tags="", $link="") {
+    ContainerDb(Producción.VPS.Servidordebasededatos.Basededatos_1, "Base de datos", $techn="PostgreSQL", $descr="Solicitudes, rutas, puntos, distritos y reportes (esquemas modulares, ADR-002).", $tags="", $link="")
+  }
+
+  Deployment_Node(Producción.VPS.Monitoreo, "Monitoreo", $type="Prometheus / logs", $descr="Métricas y registros del VPS.", $tags="", $link="")
+}
+
+Rel(Producción.VPS.Monolitomodular.APIEcoRecicla_1, Producción.VPS.Monolitomodular.Colaycaché_1, "Encola tareas y lee caché", $techn="Redis protocol", $tags="", $link="")
+Rel(Producción.VPS.Monolitomodular.Workerdetareas_1, Producción.VPS.Monolitomodular.Colaycaché_1, "Consume tareas", $techn="Redis protocol", $tags="", $link="")
+Rel(Producción.VPS.Monolitomodular.APIEcoRecicla_1, Producción.VPS.Servidordebasededatos.Basededatos_1, "Lee y escribe", $techn="SQL/TCP", $tags="", $link="")
+Rel(Producción.VPS.Monolitomodular.Workerdetareas_1, Producción.VPS.Servidordebasededatos.Basededatos_1, "Lee datos y guarda reportes", $techn="SQL/TCP", $tags="", $link="")
+Rel(Producción.Navegadordelvecinoodelamunicipalidad.Aplicaciónwebdevecinosymunicipalidad_1, Producción.VPS.Nginx, "Llama a", $techn="HTTPS/JSON", $tags="", $link="")
+Rel(Producción.Celulardelreciclador.PWAdelreciclador_1, Producción.VPS.Nginx, "Llama a", $techn="HTTPS/JSON", $tags="", $link="")
+Rel(Producción.VPS.Nginx, Producción.VPS.Monolitomodular.APIEcoRecicla_1, "Reenvía las peticiones", $techn="HTTP", $tags="", $link="")
+Rel(Producción.VPS.Monolitomodular.APIEcoRecicla_1, Producción.VPS.Monitoreo, "Envía métricas y registros", $techn="HTTP", $tags="", $link="")
+
+SHOW_LEGEND(true)
+hide stereotypes
+@enduml

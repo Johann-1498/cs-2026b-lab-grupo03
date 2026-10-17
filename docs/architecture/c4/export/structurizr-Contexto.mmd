@@ -1,0 +1,26 @@
+graph LR
+  linkStyle default fill:#ffffff
+
+  subgraph diagram ["System Context View: EcoRecicla AQP"]
+    style diagram fill:#ffffff,stroke:#ffffff
+
+    1["<div style='font-weight: bold'>Vecino</div><div style='font-size: 70%; margin-top: 0px'>[Person]</div><div style='font-size: 80%; margin-top:10px'>Solicita el recojo de sus<br />reciclables y acumula puntos<br />ecológicos.</div>"]
+    style 1 fill:#08427b,stroke:#052e56,color:#ffffff
+    18["<div style='font-weight: bold'>Servicio de notificaciones</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Entrega avisos de asignación<br />y de puntos a vecinos y<br />recicladores.</div>"]
+    style 18 fill:#999999,stroke:#6b6b6b,color:#ffffff
+    19["<div style='font-weight: bold'>Sistema de incentivos municipales</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Gestiona los beneficios que<br />los vecinos canjean con sus<br />puntos.</div>"]
+    style 19 fill:#999999,stroke:#6b6b6b,color:#ffffff
+    2["<div style='font-weight: bold'>Reciclador</div><div style='font-size: 70%; margin-top: 0px'>[Person]</div><div style='font-size: 80%; margin-top:10px'>Reciclador formalizado:<br />recorre su ruta diaria,<br />recoge y pesa el material.</div>"]
+    style 2 fill:#08427b,stroke:#052e56,color:#ffffff
+    3["<div style='font-weight: bold'>Administrador municipal</div><div style='font-size: 70%; margin-top: 0px'>[Person]</div><div style='font-size: 80%; margin-top:10px'>Gestiona distritos y<br />asociaciones de recicladores<br />y consulta reportes de<br />toneladas.</div>"]
+    style 3 fill:#08427b,stroke:#052e56,color:#ffffff
+    4["<div style='font-weight: bold'>EcoRecicla AQP</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Permite solicitar el recojo<br />de reciclables, asignar<br />recicladores, registrar el<br />pesaje, acreditar puntos y<br />reportar toneladas.</div>"]
+    style 4 fill:#1168bd,stroke:#0b4884,color:#ffffff
+
+    1-. "<div>Solicita recojos y consulta<br />sus puntos</div><div style='font-size: 70%'></div>" .->4
+    2-. "<div>Consulta su ruta y registra<br />recojos y pesajes</div><div style='font-size: 70%'></div>" .->4
+    3-. "<div>Gestiona distritos y descarga<br />reportes</div><div style='font-size: 70%'></div>" .->4
+    4-. "<div>Envía avisos de asignación y<br />de puntos</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->18
+    4-. "<div>Registra el canje de puntos</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->19
+
+  end

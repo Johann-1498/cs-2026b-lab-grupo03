@@ -1,0 +1,68 @@
+graph LR
+  linkStyle default fill:#ffffff
+
+  subgraph diagram ["Component View: EcoRecicla AQP - API EcoRecicla"]
+    style diagram fill:#ffffff,stroke:#ffffff
+
+    19["<div style='font-weight: bold'>Sistema de incentivos municipales</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Gestiona los beneficios que<br />los vecinos canjean con sus<br />puntos.</div>"]
+    style 19 fill:#999999,stroke:#6b6b6b,color:#ffffff
+
+    subgraph 4 ["EcoRecicla AQP"]
+      style 4 fill:#ffffff,stroke:#0b4884,color:#0b4884
+
+      subgraph 7 ["API EcoRecicla"]
+        style 7 fill:#ffffff,stroke:#2e6295,color:#2e6295
+
+        10["<div style='font-weight: bold'>Módulo Distritos</div><div style='font-size: 70%; margin-top: 0px'>[Component: Django app]</div><div style='font-size: 80%; margin-top:10px'>Gestiona distritos, sectores<br />de cobertura y asociaciones<br />de recicladores.</div>"]
+        style 10 fill:#85bbf0,stroke:#5d82a8,color:#000000
+        11["<div style='font-weight: bold'>Módulo Puntos</div><div style='font-size: 70%; margin-top: 0px'>[Component: Django app]</div><div style='font-size: 80%; margin-top:10px'>Calcula y acredita puntos con<br />una regla por distrito<br />(patrón Strategy).</div>"]
+        style 11 fill:#85bbf0,stroke:#5d82a8,color:#000000
+        12["<div style='font-weight: bold'>Módulo Reportes</div><div style='font-size: 70%; margin-top: 0px'>[Component: Django app]</div><div style='font-size: 80%; margin-top:10px'>Reportes consolidados de<br />toneladas por distrito,<br />material, reciclador y<br />fechas.</div>"]
+        style 12 fill:#85bbf0,stroke:#5d82a8,color:#000000
+        13["<div style='font-weight: bold'>Núcleo compartido</div><div style='font-size: 70%; margin-top: 0px'>[Component: Paquete Python]</div><div style='font-size: 80%; margin-top:10px'>Tipos de valor comunes:<br />TipoMaterial y Pesaje.</div>"]
+        style 13 fill:#85bbf0,stroke:#5d82a8,color:#000000
+        14["<div style='font-weight: bold'>Adaptadores de infraestructura</div><div style='font-size: 70%; margin-top: 0px'>[Component: Paquete Python / Django ORM]</div><div style='font-size: 80%; margin-top:10px'>Implementan los puertos:<br />repositorio de solicitudes<br />(ORM), notificador e<br />incentivos.</div>"]
+        style 14 fill:#85bbf0,stroke:#5d82a8,color:#000000
+        8["<div style='font-weight: bold'>Módulo Solicitudes</div><div style='font-size: 70%; margin-top: 0px'>[Component: Django app]</div><div style='font-size: 80%; margin-top:10px'>Registra solicitudes de<br />recojo y gestiona su ciclo de<br />vida (PENDIENTE a<br />PUNTOS_ACREDITADOS).</div>"]
+        style 8 fill:#85bbf0,stroke:#5d82a8,color:#000000
+        9["<div style='font-weight: bold'>Módulo Rutas</div><div style='font-size: 70%; margin-top: 0px'>[Component: Django app]</div><div style='font-size: 80%; margin-top:10px'>Asigna recicladores (realiza<br />el puerto<br />AsignadorReciclador) y genera<br />la ruta del día.</div>"]
+        style 9 fill:#85bbf0,stroke:#5d82a8,color:#000000
+      end
+
+      16[("<div style='font-weight: bold'>Base de datos</div><div style='font-size: 70%; margin-top: 0px'>[Container: PostgreSQL]</div><div style='font-size: 80%; margin-top:10px'>Solicitudes, rutas, puntos,<br />distritos y reportes<br />(esquemas modulares,<br />ADR-002).</div>")]
+      style 16 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      17["<div style='font-weight: bold'>Cola y caché</div><div style='font-size: 70%; margin-top: 0px'>[Container: Redis]</div><div style='font-size: 80%; margin-top:10px'>Cola de tareas del worker y<br />caché de consultas.</div>"]
+      style 17 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      5["<div style='font-weight: bold'>Aplicación web de vecinos y municipalidad</div><div style='font-size: 70%; margin-top: 0px'>[Container: Aplicación web (navegador)]</div><div style='font-size: 80%; margin-top:10px'>Interfaz para solicitar<br />recojos, consultar puntos,<br />gestionar distritos y<br />descargar reportes.</div>"]
+      style 5 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      6["<div style='font-weight: bold'>PWA del reciclador</div><div style='font-size: 70%; margin-top: 0px'>[Container: Progressive Web App (Service Worker)]</div><div style='font-size: 80%; margin-top:10px'>Ruta del día y registro de<br />recojo y pesaje en 4 toques o<br />menos; guarda los registros<br />en el celular si no hay señal<br />3G.</div>"]
+      style 6 fill:#438dd5,stroke:#2e6295,color:#ffffff
+    end
+
+    5-. "<div>Registra y consulta<br />solicitudes</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->8
+    5-. "<div>Consulta su saldo de puntos</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->11
+    5-. "<div>Gestiona distritos y<br />cobertura</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->10
+    5-. "<div>Descarga reportes</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->12
+    6-. "<div>Consulta la ruta del día</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->9
+    6-. "<div>Registra recojo y pesaje</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->8
+    8-. "<div>Verifica la cobertura del<br />distrito</div><div style='font-size: 70%'></div>" .->10
+    8-. "<div>Pide asignar un reciclador<br />(puerto AsignadorReciclador)</div><div style='font-size: 70%'></div>" .->9
+    8-. "<div>Acredita los puntos del<br />pesaje</div><div style='font-size: 70%'></div>" .->11
+    8-. "<div>Usa TipoMaterial y Pesaje</div><div style='font-size: 70%'></div>" .->13
+    11-. "<div>Usa Pesaje</div><div style='font-size: 70%'></div>" .->13
+    8-. "<div>Guarda y busca solicitudes<br />(puerto<br />RepositorioSolicitudes)</div><div style='font-size: 70%'></div>" .->14
+    8-. "<div>Pide notificar (puerto<br />Notificador)</div><div style='font-size: 70%'></div>" .->14
+    9-. "<div>Lee las solicitudes asignadas<br />(puerto<br />RepositorioSolicitudes)</div><div style='font-size: 70%'></div>" .->14
+    12-. "<div>Lee solicitudes (solo<br />lectura)</div><div style='font-size: 70%'></div>" .->8
+    12-. "<div>Lee recicladores y rutas<br />(solo lectura)</div><div style='font-size: 70%'></div>" .->9
+    12-. "<div>Lee puntos (solo lectura)</div><div style='font-size: 70%'></div>" .->11
+    12-. "<div>Lee distritos (solo lectura)</div><div style='font-size: 70%'></div>" .->10
+    12-. "<div>Encola la generación del<br />reporte</div><div style='font-size: 70%'>[Redis protocol]</div>" .->17
+    9-. "<div>Lee y escribe sus tablas</div><div style='font-size: 70%'>[SQL/TCP]</div>" .->16
+    10-. "<div>Lee y escribe sus tablas</div><div style='font-size: 70%'>[SQL/TCP]</div>" .->16
+    11-. "<div>Lee y escribe sus tablas</div><div style='font-size: 70%'>[SQL/TCP]</div>" .->16
+    14-. "<div>Lee y escribe las solicitudes</div><div style='font-size: 70%'>[SQL/TCP]</div>" .->16
+    14-. "<div>Encola las notificaciones<br />(asíncrono)</div><div style='font-size: 70%'>[Redis protocol]</div>" .->17
+    14-. "<div>Registra canjes de puntos</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->19
+
+  end

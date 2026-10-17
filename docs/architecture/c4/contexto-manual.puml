@@ -1,0 +1,20 @@
+@startuml contexto-manual
+!include <C4/C4_Context>
+skinparam dpi 180
+LAYOUT_LEFT_RIGHT()
+title Contexto de EcoRecicla AQP (C4-PlantUML escrito a mano)
+
+Person(vecino, "Vecino", "Solicita el recojo de sus reciclables")
+Person(reciclador, "Reciclador", "Recoge y pesa el material en campo")
+Person(muni, "Administrador municipal", "Gestiona distritos y ve reportes")
+System(eco, "EcoRecicla AQP", "Recojo domiciliario de reciclables, rutas, puntos y reportes")
+System_Ext(notif, "Servicio de notificaciones", "Avisos a vecinos y recicladores")
+System_Ext(incent, "Sistema de incentivos municipales", "Beneficios por puntos")
+
+Rel(vecino, eco, "Solicita recojos y consulta sus puntos")
+Rel(reciclador, eco, "Consulta su ruta y registra recojos y pesajes")
+Rel(muni, eco, "Gestiona distritos y descarga reportes")
+Rel(eco, notif, "Envía avisos de asignación y de puntos", "HTTPS/JSON")
+Rel(eco, incent, "Registra el canje de puntos", "HTTPS/JSON")
+SHOW_LEGEND()
+@enduml

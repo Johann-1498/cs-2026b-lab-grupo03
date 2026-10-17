@@ -1,0 +1,32 @@
+@startuml
+title <size:24>System Context View: EcoRecicla AQP</size>\n<size:24>Nivel 1: EcoRecicla AQP y su entorno.</size>
+
+set separator none
+left to right direction
+
+<style>
+  root {
+    BackgroundColor: #ffffff
+    FontColor: #444444
+  }
+</style>
+
+!include <C4/C4>
+!include <C4/C4_Context>
+
+Person(Vecino, "Vecino", $descr="Solicita el recojo de sus reciclables y acumula puntos ecológicos.", $tags="", $link="")
+System_Ext(Serviciodenotificaciones, "Servicio de notificaciones", $descr="Entrega avisos de asignación y de puntos a vecinos y recicladores.", $tags="", $link="")
+System_Ext(Sistemadeincentivosmunicipales, "Sistema de incentivos municipales", $descr="Gestiona los beneficios que los vecinos canjean con sus puntos.", $tags="", $link="")
+Person(Reciclador, "Reciclador", $descr="Reciclador formalizado: recorre su ruta diaria, recoge y pesa el material.", $tags="", $link="")
+Person(Administradormunicipal, "Administrador municipal", $descr="Gestiona distritos y asociaciones de recicladores y consulta reportes de toneladas.", $tags="", $link="")
+System(EcoReciclaAQP, "EcoRecicla AQP", $descr="Permite solicitar el recojo de reciclables, asignar recicladores, registrar el pesaje, acreditar puntos y reportar toneladas.", $tags="", $link="")
+
+Rel(Vecino, EcoReciclaAQP, "Solicita recojos y consulta sus puntos", $techn="", $tags="", $link="")
+Rel(Reciclador, EcoReciclaAQP, "Consulta su ruta y registra recojos y pesajes", $techn="", $tags="", $link="")
+Rel(Administradormunicipal, EcoReciclaAQP, "Gestiona distritos y descarga reportes", $techn="", $tags="", $link="")
+Rel(EcoReciclaAQP, Serviciodenotificaciones, "Envía avisos de asignación y de puntos", $techn="HTTPS/JSON", $tags="", $link="")
+Rel(EcoReciclaAQP, Sistemadeincentivosmunicipales, "Registra el canje de puntos", $techn="HTTPS/JSON", $tags="", $link="")
+
+SHOW_LEGEND(true)
+hide stereotypes
+@enduml

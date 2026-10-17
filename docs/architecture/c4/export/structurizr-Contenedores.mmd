@@ -1,0 +1,47 @@
+graph LR
+  linkStyle default fill:#ffffff
+
+  subgraph diagram ["Container View: EcoRecicla AQP"]
+    style diagram fill:#ffffff,stroke:#ffffff
+
+    1["<div style='font-weight: bold'>Vecino</div><div style='font-size: 70%; margin-top: 0px'>[Person]</div><div style='font-size: 80%; margin-top:10px'>Solicita el recojo de sus<br />reciclables y acumula puntos<br />ecológicos.</div>"]
+    style 1 fill:#08427b,stroke:#052e56,color:#ffffff
+    2["<div style='font-weight: bold'>Reciclador</div><div style='font-size: 70%; margin-top: 0px'>[Person]</div><div style='font-size: 80%; margin-top:10px'>Reciclador formalizado:<br />recorre su ruta diaria,<br />recoge y pesa el material.</div>"]
+    style 2 fill:#08427b,stroke:#052e56,color:#ffffff
+    3["<div style='font-weight: bold'>Administrador municipal</div><div style='font-size: 70%; margin-top: 0px'>[Person]</div><div style='font-size: 80%; margin-top:10px'>Gestiona distritos y<br />asociaciones de recicladores<br />y consulta reportes de<br />toneladas.</div>"]
+    style 3 fill:#08427b,stroke:#052e56,color:#ffffff
+    18["<div style='font-weight: bold'>Servicio de notificaciones</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Entrega avisos de asignación<br />y de puntos a vecinos y<br />recicladores.</div>"]
+    style 18 fill:#999999,stroke:#6b6b6b,color:#ffffff
+    19["<div style='font-weight: bold'>Sistema de incentivos municipales</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Gestiona los beneficios que<br />los vecinos canjean con sus<br />puntos.</div>"]
+    style 19 fill:#999999,stroke:#6b6b6b,color:#ffffff
+
+    subgraph 4 ["EcoRecicla AQP"]
+      style 4 fill:#ffffff,stroke:#0b4884,color:#0b4884
+
+      15["<div style='font-weight: bold'>Worker de tareas</div><div style='font-size: 70%; margin-top: 0px'>[Container: Celery]</div><div style='font-size: 80%; margin-top:10px'>Ejecuta de forma asíncrona<br />los reportes y el envío de<br />notificaciones, con<br />reintentos.</div>"]
+      style 15 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      16[("<div style='font-weight: bold'>Base de datos</div><div style='font-size: 70%; margin-top: 0px'>[Container: PostgreSQL]</div><div style='font-size: 80%; margin-top:10px'>Solicitudes, rutas, puntos,<br />distritos y reportes<br />(esquemas modulares,<br />ADR-002).</div>")]
+      style 16 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      17["<div style='font-weight: bold'>Cola y caché</div><div style='font-size: 70%; margin-top: 0px'>[Container: Redis]</div><div style='font-size: 80%; margin-top:10px'>Cola de tareas del worker y<br />caché de consultas.</div>"]
+      style 17 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      5["<div style='font-weight: bold'>Aplicación web de vecinos y municipalidad</div><div style='font-size: 70%; margin-top: 0px'>[Container: Aplicación web (navegador)]</div><div style='font-size: 80%; margin-top:10px'>Interfaz para solicitar<br />recojos, consultar puntos,<br />gestionar distritos y<br />descargar reportes.</div>"]
+      style 5 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      6["<div style='font-weight: bold'>PWA del reciclador</div><div style='font-size: 70%; margin-top: 0px'>[Container: Progressive Web App (Service Worker)]</div><div style='font-size: 80%; margin-top:10px'>Ruta del día y registro de<br />recojo y pesaje en 4 toques o<br />menos; guarda los registros<br />en el celular si no hay señal<br />3G.</div>"]
+      style 6 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      7["<div style='font-weight: bold'>API EcoRecicla</div><div style='font-size: 70%; margin-top: 0px'>[Container: Python / Django REST Framework / simplejwt]</div><div style='font-size: 80%; margin-top:10px'>Monolito modular que<br />implementa los casos de uso<br />mediante una API REST con<br />autenticación JWT (ADR-001,<br />ADR-003).</div>"]
+      style 7 fill:#438dd5,stroke:#2e6295,color:#ffffff
+    end
+
+    1-. "<div>Solicita recojos y consulta<br />sus puntos</div><div style='font-size: 70%'>[HTTPS]</div>" .->5
+    3-. "<div>Gestiona distritos y descarga<br />reportes</div><div style='font-size: 70%'>[HTTPS]</div>" .->5
+    2-. "<div>Consulta su ruta y registra<br />recojos, con o sin conexión</div><div style='font-size: 70%'>[HTTPS]</div>" .->6
+    5-. "<div>Llama a</div><div style='font-size: 70%'>[HTTPS/JSON (REST + JWT)]</div>" .->7
+    6-. "<div>Consulta rutas y envía<br />pesajes</div><div style='font-size: 70%'>[HTTPS/JSON (REST + JWT)]</div>" .->7
+    7-. "<div>Lee y escribe</div><div style='font-size: 70%'>[SQL/TCP]</div>" .->16
+    7-. "<div>Encola tareas y lee caché</div><div style='font-size: 70%'>[Redis protocol]</div>" .->17
+    15-. "<div>Consume tareas</div><div style='font-size: 70%'>[Redis protocol]</div>" .->17
+    15-. "<div>Lee datos y guarda reportes</div><div style='font-size: 70%'>[SQL/TCP]</div>" .->16
+    15-. "<div>Envía mensajes</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->18
+    7-. "<div>Registra canjes de puntos</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->19
+
+  end

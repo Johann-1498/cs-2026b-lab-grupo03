@@ -123,3 +123,86 @@ positivos (el estereotipo `<<create>>` y un "ciclo" inexistente por no leer la d
 round-trip con `pyreverse` mostró qué información no sobrevive al código (multiplicidades, composiciones,
 intención de puertos). Confirmamos la regla de oro: la IA propone; el equipo decide y verifica con reglas
 explícitas (C1–C5) y pruebas automáticas.
+
+## Arquitectura C4 (Lab 06)
+
+**Laboratorio 06 – Modelo C4 con Structurizr DSL** · Construcción de Software · EPIS-UNSA · 2026-B · Grupo 03.
+Un **único modelo** ([`workspace.dsl`](docs/architecture/c4/workspace.dsl)) del que se derivan las cinco vistas: contexto, contenedores,
+componentes, dinámica ("solicitar recojo") y despliegue. Es coherente con los [ADR](docs/architecture/adr/) del Lab 04 y con el
+diagrama de paquetes del Lab 05 (el nivel 4, código, es [`clases.puml`](docs/design/clases.puml)).
+
+### Diagrama de contexto (Mermaid, exportado de Structurizr)
+
+```mermaid
+graph LR
+  linkStyle default fill:#ffffff
+
+  subgraph diagram ["System Context View: EcoRecicla AQP"]
+    style diagram fill:#ffffff,stroke:#ffffff
+
+    1["<div style='font-weight: bold'>Vecino</div><div style='font-size: 70%; margin-top: 0px'>[Person]</div><div style='font-size: 80%; margin-top:10px'>Solicita el recojo de sus<br />reciclables y acumula puntos<br />ecológicos.</div>"]
+    style 1 fill:#08427b,stroke:#052e56,color:#ffffff
+    18["<div style='font-weight: bold'>Servicio de notificaciones</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Entrega avisos de asignación<br />y de puntos a vecinos y<br />recicladores.</div>"]
+    style 18 fill:#999999,stroke:#6b6b6b,color:#ffffff
+    19["<div style='font-weight: bold'>Sistema de incentivos municipales</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Gestiona los beneficios que<br />los vecinos canjean con sus<br />puntos.</div>"]
+    style 19 fill:#999999,stroke:#6b6b6b,color:#ffffff
+    2["<div style='font-weight: bold'>Reciclador</div><div style='font-size: 70%; margin-top: 0px'>[Person]</div><div style='font-size: 80%; margin-top:10px'>Reciclador formalizado:<br />recorre su ruta diaria,<br />recoge y pesa el material.</div>"]
+    style 2 fill:#08427b,stroke:#052e56,color:#ffffff
+    3["<div style='font-weight: bold'>Administrador municipal</div><div style='font-size: 70%; margin-top: 0px'>[Person]</div><div style='font-size: 80%; margin-top:10px'>Gestiona distritos y<br />asociaciones de recicladores<br />y consulta reportes de<br />toneladas.</div>"]
+    style 3 fill:#08427b,stroke:#052e56,color:#ffffff
+    4["<div style='font-weight: bold'>EcoRecicla AQP</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Permite solicitar el recojo<br />de reciclables, asignar<br />recicladores, registrar el<br />pesaje, acreditar puntos y<br />reportar toneladas.</div>"]
+    style 4 fill:#1168bd,stroke:#0b4884,color:#ffffff
+
+    1-. "<div>Solicita recojos y consulta<br />sus puntos</div><div style='font-size: 70%'></div>" .->4
+    2-. "<div>Consulta su ruta y registra<br />recojos y pesajes</div><div style='font-size: 70%'></div>" .->4
+    3-. "<div>Gestiona distritos y descarga<br />reportes</div><div style='font-size: 70%'></div>" .->4
+    4-. "<div>Envía avisos de asignación y<br />de puntos</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->18
+    4-. "<div>Registra el canje de puntos</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->19
+
+  end
+```
+
+### Las cinco vistas (generadas desde `workspace.dsl`)
+
+| Vista | Nivel | Imagen | Código exportado |
+|---|---|---|---|
+| Contexto | 1 | [structurizr-Contexto.png](docs/architecture/c4/img/structurizr-Contexto.png) | [.puml](docs/architecture/c4/export/structurizr-Contexto.puml) · [.mmd](docs/architecture/c4/export/structurizr-Contexto.mmd) |
+| Contenedores | 2 | [structurizr-Contenedores.png](docs/architecture/c4/img/structurizr-Contenedores.png) | [.puml](docs/architecture/c4/export/structurizr-Contenedores.puml) · [.mmd](docs/architecture/c4/export/structurizr-Contenedores.mmd) |
+| Componentes (API) | 3 | [structurizr-Componentes.png](docs/architecture/c4/img/structurizr-Componentes.png) | [.puml](docs/architecture/c4/export/structurizr-Componentes.puml) · [.mmd](docs/architecture/c4/export/structurizr-Componentes.mmd) |
+| Dinámica: solicitar recojo | complementaria | [structurizr-SolicitarRecojo.png](docs/architecture/c4/img/structurizr-SolicitarRecojo.png) | [.puml](docs/architecture/c4/export/structurizr-SolicitarRecojo.puml) · [.mmd](docs/architecture/c4/export/structurizr-SolicitarRecojo.mmd) |
+| Despliegue: producción | complementaria | [structurizr-Despliegue.png](docs/architecture/c4/img/structurizr-Despliegue.png) | [.puml](docs/architecture/c4/export/structurizr-Despliegue.puml) · [.mmd](docs/architecture/c4/export/structurizr-Despliegue.mmd) |
+
+![Contenedores](docs/architecture/c4/img/structurizr-Contenedores.png)
+
+### Documentos del Lab 06
+
+| Entregable | Archivo |
+|---|---|
+| E1 – Inventario con origen de cada elemento | [inventario.md](docs/architecture/c4/inventario.md) |
+| E6 – Contexto escrito a mano y comparación | [contexto-manual.puml](docs/architecture/c4/contexto-manual.puml) · [comparacion.md](docs/architecture/c4/comparacion.md) |
+| E7 – Revisión con la lista oficial y con IA | [revision-c4.md](docs/architecture/c4/revision-c4.md) |
+| E7 – Explicación para público no técnico | [explicacion.md](docs/architecture/c4/explicacion.md) |
+| E7 – Bitácora de IA | [bitacora-ia.md](docs/architecture/c4/bitacora-ia.md) |
+| Reto opcional (Opción B): GitHub Action | [c4.yml](.github/workflows/c4.yml) |
+
+### Cómo reproducir
+
+```bash
+# Requisitos: Java 17+, Structurizr CLI y plantuml.jar
+export STRUCTURIZR=/ruta/structurizr-cli/structurizr.sh PLANTUML=/ruta/plantuml.jar
+bash scripts/c4_generar.sh      # validate + export (PlantUML y Mermaid) + PNG + verificación
+python scripts/verificar_c4.py  # solo la verificación (ADR, paquetes del Lab 05, ciclos, protocolos)
+```
+
+### Decisiones del modelo
+
+- Las flechas de C4 indican el **uso en ejecución**; las del diagrama de paquetes del Lab 05, la **dependencia de compilación**. Con el puerto
+  `AsignadorReciclador` ([ADR-004](docs/architecture/adr/004-puerto-asignador-reciclador.md)) los sentidos pueden diferir; `verificar_c4.py` comprueba la correspondencia.
+- Nginx, el VPS y el monitoreo son infraestructura (vista de despliegue), no contenedores. No se modelan Docker ni servicio de mapas (no figuran en los ADR).
+
+### Reflexión sobre el uso de la IA en el Lab 06
+
+La IA redactó rápido el borrador del modelo, pero necesitó verificación: `structurizr validate` detectó referencias inválidas en el despliegue, el
+exportador dibujó los sistemas externos como propios y la revisión con la lista oficial encontró etiquetas vagas ("Usa"). Como auditora, la IA
+marcó dos falsos positivos (un "ciclo" entre `solicitudes` y `rutas` y un supuesto error de alcance en la vista de componentes). Por eso
+combinamos la lista oficial de c4model.com con un verificador automático y mantuvimos la regla: la IA propone; el equipo decide y verifica.

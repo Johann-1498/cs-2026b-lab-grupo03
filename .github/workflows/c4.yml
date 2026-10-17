@@ -1,0 +1,39 @@
+name: C4 (validar y regenerar vistas)
+
+on:
+  push:
+    paths:
+      - "docs/architecture/c4/**"
+      - "docs/design/paquetes.puml"
+      - "scripts/**"
+      - ".github/workflows/c4.yml"
+  pull_request:
+
+jobs:
+  c4:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Instalar Structurizr CLI y PlantUML
+        run: |
+          curl -sL -o structurizr-cli.zip https://github.com/structurizr/cli/releases/latest/download/structurizr-cli.zip
+          unzip -q structurizr-cli.zip -d structurizr-cli
+          curl -sL -o plantuml.jar https://github.com/plantuml/plantuml/releases/download/v1.2025.4/plantuml-1.2025.4.jar
+
+      - name: Validar, exportar, generar imágenes y verificar (falla si el modelo tiene errores)
+        env:
+          STRUCTURIZR: ${{ github.workspace }}/structurizr-cli/structurizr.sh
+          PLANTUML: ${{ github.workspace }}/plantuml.jar
+        run: bash scripts/c4_generar.sh
+
+      - name: Publicar las imágenes regeneradas
+        uses: actions/upload-artifact@v4
+        with:
+          name: vistas-c4
+          path: docs/architecture/c4/img/

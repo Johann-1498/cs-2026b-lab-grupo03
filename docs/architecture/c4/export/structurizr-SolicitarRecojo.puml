@@ -1,0 +1,50 @@
+@startuml
+title <size:24>Dynamic View: EcoRecicla AQP - API EcoRecicla</size>\n<size:24>Dinámico: solicitar el recojo de reciclables (HU-03).</size>
+
+set separator none
+left to right direction
+
+<style>
+  root {
+    BackgroundColor: #ffffff
+    FontColor: #444444
+  }
+</style>
+
+!include <C4/C4>
+!include <C4/C4_Context>
+!include <C4/C4_Container>
+!include <C4/C4_Component>
+
+System_Ext(Serviciodenotificaciones, "Servicio de notificaciones", $descr="Entrega avisos de asignación y de puntos a vecinos y recicladores.", $tags="", $link="")
+
+System_Boundary("EcoReciclaAQP_boundary", "EcoRecicla AQP", $tags="") {
+  Container_Boundary("EcoReciclaAQP.APIEcoRecicla_boundary", "API EcoRecicla", $tags="") {
+    Component(EcoReciclaAQP.APIEcoRecicla.MóduloDistritos, "Módulo Distritos", $techn="Django app", $descr="Gestiona distritos, sectores de cobertura y asociaciones de recicladores.", $tags="", $link="")
+    Component(EcoReciclaAQP.APIEcoRecicla.Adaptadoresdeinfraestructura, "Adaptadores de infraestructura", $techn="Paquete Python / Django ORM", $descr="Implementan los puertos: repositorio de solicitudes (ORM), notificador e incentivos.", $tags="", $link="")
+    Component(EcoReciclaAQP.APIEcoRecicla.MóduloSolicitudes, "Módulo Solicitudes", $techn="Django app", $descr="Registra solicitudes de recojo y gestiona su ciclo de vida (PENDIENTE a PUNTOS_ACREDITADOS).", $tags="", $link="")
+    Component(EcoReciclaAQP.APIEcoRecicla.MóduloRutas, "Módulo Rutas", $techn="Django app", $descr="Asigna recicladores (realiza el puerto AsignadorReciclador) y genera la ruta del día.", $tags="", $link="")
+  }
+
+  Container(EcoReciclaAQP.Workerdetareas, "Worker de tareas", $techn="Celery", $descr="Ejecuta de forma asíncrona los reportes y el envío de notificaciones, con reintentos.", $tags="", $link="")
+  ContainerQueue(EcoReciclaAQP.Colaycaché, "Cola y caché", $techn="Redis", $descr="Cola de tareas del worker y caché de consultas.", $tags="", $link="")
+  Container(EcoReciclaAQP.Aplicaciónwebdevecinosymunicipalidad, "Aplicación web de vecinos y municipalidad", $techn="Aplicación web (navegador)", $descr="Interfaz para solicitar recojos, consultar puntos, gestionar distritos y descargar reportes.", $tags="", $link="")
+}
+
+Container(EcoReciclaAQP.Aplicaciónwebdevecinosymunicipalidad, "Aplicación web de vecinos y municipalidad", $techn="Aplicación web (navegador)", $descr="Interfaz para solicitar recojos, consultar puntos, gestionar distritos y descargar reportes.", $tags="", $link="")
+Container(EcoReciclaAQP.Workerdetareas, "Worker de tareas", $techn="Celery", $descr="Ejecuta de forma asíncrona los reportes y el envío de notificaciones, con reintentos.", $tags="", $link="")
+ContainerQueue(EcoReciclaAQP.Colaycaché, "Cola y caché", $techn="Redis", $descr="Cola de tareas del worker y caché de consultas.", $tags="", $link="")
+System_Ext(Serviciodenotificaciones, "Servicio de notificaciones", $descr="Entrega avisos de asignación y de puntos a vecinos y recicladores.", $tags="", $link="")
+
+Rel(EcoReciclaAQP.Aplicaciónwebdevecinosymunicipalidad, EcoReciclaAQP.APIEcoRecicla.MóduloSolicitudes, "1: POST /api/solicitudes", $techn="HTTPS/JSON", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla.MóduloSolicitudes, EcoReciclaAQP.APIEcoRecicla.MóduloDistritos, "2: Verifica la cobertura", $techn="", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla.MóduloSolicitudes, EcoReciclaAQP.APIEcoRecicla.Adaptadoresdeinfraestructura, "3: Guarda la solicitud (PENDIENTE)", $techn="", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla.MóduloSolicitudes, EcoReciclaAQP.APIEcoRecicla.MóduloRutas, "4: Pide asignar un reciclador", $techn="", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla.MóduloSolicitudes, EcoReciclaAQP.APIEcoRecicla.Adaptadoresdeinfraestructura, "5: Guarda la asignación (ASIGNADA)", $techn="", $tags="", $link="")
+Rel(EcoReciclaAQP.APIEcoRecicla.Adaptadoresdeinfraestructura, EcoReciclaAQP.Colaycaché, "6: Encola la notificación (asíncrono)", $techn="Redis protocol", $tags="", $link="")
+Rel(EcoReciclaAQP.Workerdetareas, EcoReciclaAQP.Colaycaché, "7: Toma la tarea de notificación", $techn="Redis protocol", $tags="", $link="")
+Rel(EcoReciclaAQP.Workerdetareas, Serviciodenotificaciones, "8: Envía el aviso de asignación", $techn="HTTPS/JSON", $tags="", $link="")
+
+SHOW_LEGEND(true)
+hide stereotypes
+@enduml

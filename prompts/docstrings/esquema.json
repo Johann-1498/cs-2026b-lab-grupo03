@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Documentación de una función Python (EcoRecicla AQP)",
+  "type": "object",
+  "required": ["funcion", "resumen", "parametros", "retorna", "excepciones", "docstring"],
+  "additionalProperties": false,
+  "properties": {
+    "funcion": {"type": "string", "minLength": 1},
+    "resumen": {"type": "string", "minLength": 10, "maxLength": 120},
+    "parametros": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["nombre", "tipo", "descripcion"],
+        "additionalProperties": false,
+        "properties": {
+          "nombre": {"type": "string", "minLength": 1},
+          "tipo": {"type": "string", "minLength": 1},
+          "descripcion": {"type": "string", "minLength": 5}
+        }
+      }
+    },
+    "retorna": {
+      "anyOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "required": ["tipo", "descripcion"],
+          "additionalProperties": false,
+          "properties": {
+            "tipo": {"type": "string", "minLength": 1},
+            "descripcion": {"type": "string", "minLength": 5}
+          }
+        }
+      ]
+    },
+    "excepciones": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["tipo", "cuando"],
+        "additionalProperties": false,
+        "properties": {
+          "tipo": {"type": "string", "minLength": 1},
+          "cuando": {"type": "string", "minLength": 5}
+        }
+      }
+    },
+    "docstring": {"type": "string", "minLength": 20}
+  }
+}

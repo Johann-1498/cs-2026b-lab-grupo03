@@ -1,0 +1,11 @@
+```python
+def verificar_cobertura(self, distrito_id: UUID) -> bool:
+    """Indica si un distrito tiene cobertura de recojo.
+
+    Args:
+        distrito_id: Identificador del distrito.
+
+    Returns:
+        True si el distrito existe y tiene cobertura; False si no existe o no tiene cobertura.
+    """
+```

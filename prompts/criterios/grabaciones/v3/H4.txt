@@ -1,0 +1,4 @@
+{"historia_id": "H4", "invest_ok": true, "preguntas": [], "escenarios": [
+{"titulo": "Canje de un beneficio", "tipo": "exito", "dado": ["un vecino con 120 puntos y un beneficio municipal que cuesta 100 puntos"], "cuando": "canjeo el beneficio", "entonces": ["mi saldo baja a 20 puntos", "el canje aparece en mi historial"]},
+{"titulo": "Saldo insuficiente", "tipo": "error", "dado": ["un vecino con 40 puntos"], "cuando": "intento canjear un beneficio de 100 puntos", "entonces": ["veo el mensaje \"Saldo insuficiente\"", "mi saldo sigue siendo 40 puntos"]},
+{"titulo": "Vecino sin puntos", "tipo": "borde", "dado": ["un vecino que aún no ha reciclado"], "cuando": "consulto mi saldo", "entonces": ["veo un saldo de 0 puntos", "mi historial está vacío"]}]}

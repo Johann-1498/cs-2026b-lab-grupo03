@@ -1,8 +1,19 @@
-// A3 (versión inicial): ninguna mención de implementación en la respuesta.
+// A3: los ESCENARIOS describen comportamiento observable, no la implementación.
+// Se revisan solo los escenarios (no las preguntas al Product Owner): una pregunta
+// como "¿qué necesidad se ve afectada por la base de datos?" es correcta.
+// Versión 2 de la aserción: "tabla" solo cuenta en sentido de base de datos
+// (la tabla que el usuario VE en pantalla es comportamiento observable).
 // Auto-contenida (sin require): el mismo código se puede pegar inline en casos.yaml.
-const PROHIBIDAS = ['postgresql', 'django', 'react', 'endpoint', 'tabla', 'api de', 'base de datos'];
+const parsear = (o) => { try { const x = JSON.parse(o); return x && typeof x === 'object' && !Array.isArray(x) ? x : null; } catch (e) { return null; } };
+const ok = (pass, reason) => ({ pass, score: pass ? 1 : 0, reason });
+const PROHIBIDAS = [
+  /\bpostgres(ql)?\b/, /\bdjango\b/, /\breact\b/, /\bjwt\b/, /\bendpoints?\b/,
+  /\bapis?\b/, /\bbase de datos\b/, /\bsql\b/, /\borm\b/,
+  /\btablas? (de la |de )?(base|bd)\b/,
+];
 module.exports = (output) => {
-  const texto = String(output).toLowerCase();
-  const hallada = PROHIBIDAS.find((p) => texto.includes(p));
-  return { pass: !hallada, score: hallada ? 0 : 1, reason: hallada ? `Menciona: ${hallada}` : 'Sin detalles de implementación' };
+  const r = parsear(output);
+  const texto = (r ? JSON.stringify(r.escenarios || []) : String(output)).toLowerCase();
+  const hallada = PROHIBIDAS.find((p) => p.test(texto));
+  return ok(!hallada, hallada ? `Menciona implementación: ${hallada}` : 'Sin detalles de implementación');
 };

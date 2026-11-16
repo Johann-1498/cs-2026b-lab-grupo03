@@ -1,0 +1,4 @@
+{"historia_id": "H2", "invest_ok": true, "preguntas": [], "escenarios": [
+{"titulo": "Ruta con paradas ordenadas", "tipo": "exito", "dado": ["un reciclador con 3 solicitudes asignadas para hoy"], "cuando": "abro mi ruta del día", "entonces": ["veo las 3 paradas en el orden en que debo visitarlas", "cada parada muestra la dirección y el estado de su solicitud"]},
+{"titulo": "Día sin solicitudes asignadas", "tipo": "borde", "dado": ["un reciclador sin solicitudes asignadas para hoy"], "cuando": "abro mi ruta del día", "entonces": ["veo el mensaje \"No tienes paradas asignadas hoy\""]},
+{"titulo": "Parada no recolectada", "tipo": "borde", "dado": ["una parada de mi ruta marcada como no recolectada porque el vecino estaba ausente"], "cuando": "reviso mi ruta", "entonces": ["la parada figura con el estado \"no recolectada\""]}]}

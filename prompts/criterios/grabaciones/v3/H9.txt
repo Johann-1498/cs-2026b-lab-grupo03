@@ -1,0 +1,3 @@
+{"historia_id": "H9", "invest_ok": true, "preguntas": [], "escenarios": [
+{"titulo": "Filtrar por estado pendiente", "tipo": "exito", "dado": ["un vecino con 5 solicitudes: 2 pendientes, 2 asignadas y 1 cancelada"], "cuando": "filtro mis solicitudes por el estado \"pendiente\"", "entonces": ["veo solo mis 2 solicitudes pendientes"]},
+{"titulo": "Estado sin solicitudes", "tipo": "borde", "dado": ["un vecino sin solicitudes canceladas"], "cuando": "filtro mis solicitudes por el estado \"cancelada\"", "entonces": ["veo el mensaje \"No tienes solicitudes canceladas\""]}]}

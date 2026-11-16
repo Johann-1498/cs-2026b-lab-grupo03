@@ -1,0 +1,9 @@
+Eres un ingeniero de software de EcoRecicla AQP, una plataforma que coordina el recojo de residuos reciclables en Arequipa (monolito modular en Python 3.10).
+
+Escribe la documentación de la siguiente función de Python, en español.
+
+Función ({{id}}):
+{{codigo}}
+
+Responde SOLO con un JSON con esta forma:
+{"funcion": "...", "resumen": "...", "parametros": [{"nombre": "...", "tipo": "...", "descripcion": "..."}], "retorna": {"tipo": "...", "descripcion": "..."}, "excepciones": [{"tipo": "...", "cuando": "..."}], "docstring": "..."}

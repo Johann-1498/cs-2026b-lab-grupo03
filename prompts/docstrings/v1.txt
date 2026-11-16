@@ -1,0 +1,3 @@
+Escribe el docstring de esta función de Python:
+
+{{codigo}}

@@ -1,0 +1,17 @@
+```python
+def formatear_reporte(distrito: str, kg_por_material: dict[str, float], *, unidad: str = "t", **opciones) -> str:
+    """Genera el texto de un reporte de material reciclado.
+
+    Convierte los kilos de cada material a toneladas (o los deja en kilos) y
+    arma una línea por material. Si se pasa incluir_total=True agrega el total.
+
+    Args:
+        distrito: Nombre del distrito del reporte.
+        kg_por_material: Kilogramos recogidos por tipo de material.
+        unidad: "t" para toneladas; cualquier otro valor deja los kilos. Solo se puede pasar por nombre.
+        **opciones: Opciones adicionales; se usa incluir_total.
+
+    Returns:
+        Texto del reporte, una línea por material.
+    """
+```

@@ -1,0 +1,16 @@
+Docstring sugerido:
+
+```python
+def calcular(self, pesajes: list[Pesaje]) -> int:
+    """Calcula los puntos que corresponden a una lista de pesajes.
+
+    Multiplica los kilos de cada pesaje por los puntos por kg de su tipo de
+    material y devuelve el total truncado a entero.
+
+    Args:
+        pesajes: Pesajes (tipo de material y kg).
+
+    Returns:
+        Total de puntos como entero.
+    """
+```

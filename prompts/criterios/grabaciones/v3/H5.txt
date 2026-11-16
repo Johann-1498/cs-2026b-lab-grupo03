@@ -1,0 +1,4 @@
+{"historia_id": "H5", "invest_ok": true, "preguntas": [], "escenarios": [
+{"titulo": "Reporte por distrito y rango de fechas", "tipo": "exito", "dado": ["un administrador municipal y recojos registrados en Yanahuara durante octubre"], "cuando": "descargo el reporte de Yanahuara del 1 al 31 de octubre", "entonces": ["se descarga el reporte", "veo una tabla con las toneladas de cada tipo de material y el total del periodo"]},
+{"titulo": "Rango sin recojos", "tipo": "borde", "dado": ["un rango de fechas en el que no hubo recojos"], "cuando": "descargo el reporte", "entonces": ["el reporte muestra 0 toneladas en cada tipo de material"]},
+{"titulo": "Fechas invertidas", "tipo": "error", "dado": ["una fecha de inicio posterior a la fecha final"], "cuando": "intento descargar el reporte", "entonces": ["veo el mensaje \"La fecha de inicio no puede ser posterior a la fecha final\"", "no se descarga ningún reporte"]}]}

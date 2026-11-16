@@ -1,0 +1,14 @@
+```python
+def cancelar_solicitud(self, solicitud_id: UUID, motivo: str) -> Solicitud:
+    """Cancela una solicitud de recojo.
+
+    Busca la solicitud, la cancela con el motivo indicado y guarda el cambio.
+
+    Args:
+        solicitud_id: Identificador de la solicitud.
+        motivo: Motivo de la cancelación.
+
+    Returns:
+        La solicitud ya cancelada.
+    """
+```

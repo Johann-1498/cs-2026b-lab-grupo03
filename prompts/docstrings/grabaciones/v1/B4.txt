@@ -1,0 +1,13 @@
+```python
+def consultar_saldo(self, vecino_id: UUID) -> int:
+    """Devuelve el saldo de puntos de un vecino.
+
+    Si el vecino todavía no tiene cuenta de puntos, el saldo es 0.
+
+    Args:
+        vecino_id: Identificador del vecino.
+
+    Returns:
+        Saldo actual de puntos.
+    """
+```

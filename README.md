@@ -209,7 +209,10 @@ combinamos la lista oficial de c4model.com con un verificador automático y mant
 
 ## Prompt engineering (Lab 09)
 
-### Tarea A: versiones y tasas (E2–E3)
+**Laboratorio 09 – Prompts como código** · Construcción de Software · EPIS-UNSA · 2026-B · Grupo 03.
+Los prompts se versionan, se evalúan con un dataset y aserciones automáticas (promptfoo 0.118) y se validan con JSON Schema.
+
+### Tarea A: criterios de aceptación Gherkin (`prompts/criterios/`)
 
 | Versión | Cambio | Aprobación |
 |---|---|---|
@@ -217,4 +220,50 @@ combinamos la lista oficial de c4model.com con un verificador automático y mant
 | v2 | Rol, contexto y formato JSON | 3/9 = **33,3 %** |
 | v3 | Tarea paso a paso (INVEST), restricciones, ejemplo, datos delimitados | 9/9 = **100 %** |
 
-Evaluadores corregidos (A3 y A5, falsos positivos): con las aserciones iniciales v3 sacaba 7/9. Detalle en el README final.
+Evaluadores corregidos (A3 y A5, falsos positivos): con las aserciones iniciales v3 sacaba 7/9. Detalle en la bitácora.
+
+### Tarea B: docstrings (`prompts/docstrings/`)
+
+| Versión | Aprobación |
+|---|---|
+| v1 | 0/9 = **0,0 %** |
+| v2 | 6/9 = **66,7 %** |
+| v3 | 9/9 = **100 %** |
+
+### Red teaming (`prompts/seguridad/`)
+
+Seis ataques contra v3 y v4: ambas resisten 6/6 con este asistente. No se afirma una mejora medida de v4; su defensa adicional
+(capas 1 y 3 en código, `src/asistente_ia/`) se justifica porque no depende del modelo y se prueba con 11 pruebas nuevas (36 en total).
+
+### No determinismo (`prompts/no-determinismo.md`)
+
+Corridas **reales** de la v4 sobre H1, H7 y H9: 3 corridas con subagentes de Copilot en contextos nuevos (modelo `gpt-5.6-luna`),
+respuestas sin editar en `prompts/criterios-nodet/grabaciones/`. Resultado: 2/3 = 66,7 % en cada corrida. H1 y H7 aprobaron siempre;
+H9 falló siempre por **formato** (causa distinta cada vez) y ninguna corrida obedeció la inyección (A5 pasó). No se modificaron aserciones ni umbrales.
+
+### Transparencia sobre las grabaciones
+
+Las respuestas de `prompts/<tarea>/grabaciones/` (tasas de las tablas anteriores y del red teaming) fueron **redactadas por el asistente (Claude)**
+en la conversación de trabajo, sin editarlas tras ver las aserciones; no son ejecuciones independientes en una API. Por eso esas tasas
+validan el pipeline de evaluación y **no predicen** el comportamiento de un modelo real, que en las corridas reales de arriba fue 66,7 %.
+Declarado también en [bitacora-ia.md](prompts/bitacora-ia.md) y en el informe.
+
+### Cómo reproducir
+
+```bash
+pip install pytest jsonschema
+python3 -m pytest tests -q                      # 36 pruebas
+export PROMPTFOO_PYTHON=python3 PROMPTFOO_DISABLE_TELEMETRY=1
+npx promptfoo@0.118.0 eval -c prompts/criterios/promptfooconfig.yaml --no-cache -o /tmp/r.json
+python3 scripts/resumen_promptfoo.py /tmp/r.json   # tasa por versión
+```
+
+La CI (`.github/workflows/prompts.yml`) ejecuta lo anterior y exige ≥ 85 % en la v3 de las Tareas A y B y 100 % en la v4 de los ataques.
+
+### Reflexión sobre el uso de la IA en el Lab 09
+
+La IA aceleró el dataset, los prompts y las aserciones, pero se equivocó donde solo los datos lo mostraron: dos aserciones dieron falsos positivos
+(A3 y A5), una lista YAML duplicó casos y las aserciones `file://` fallaron. Además, las grabaciones las redactó la propia IA, así que su 100 %
+no es prueba de un modelo real: las corridas reales dieron 66,7 % por fallos de formato que solo el esquema JSON detecta. Un agente de Copilot
+ejecutó los commits, ramas y pull requests con la cuenta del equipo; la revisión de cada PR la hicieron personas del grupo. Confirmamos la regla
+de oro: la IA propone; el equipo decide y verifica con datos.

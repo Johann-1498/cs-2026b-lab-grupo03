@@ -1,0 +1,1 @@
+{"historia_id":"H7","invest_ok":false,"preguntas":["¿Qué tareas específicas deben realizar los recicladores en campo y qué significa que sean rápidas y fáciles de usar?","¿Qué tiempos máximos de respuesta y cantidad de pasos se consideran aceptables para esas tareas?","¿En qué dispositivos y condiciones de conectividad debe validarse la facilidad de uso?"],"escenarios":[]}

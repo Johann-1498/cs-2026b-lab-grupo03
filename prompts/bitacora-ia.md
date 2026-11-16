@@ -16,6 +16,7 @@
 | 4 | 14/11/2026 | Claude | Poner `excepciones_permitidas` como **lista** en `casos.yaml` (Tarea B). | **Sugerencia rechazada con evidencia:** promptfoo expande las variables-lista en varios casos; el dataset pasó de 9 a 11 casos y las tasas salían mal (v3 = 8/11). | Se cambió a cadena separada por comas: 9 casos y v3 = 9/9. |
 | 5 | 14/11/2026 | Claude | Aserciones por caso con `value: file://…js` desde `casos.yaml`. | Falló con `require is not defined` / `module is not defined`: promptfoo incrusta el código de los `file://` de `casos.yaml`. | Rechazada: A4, A5 y B7 van inline (cuerpo de función con `return`); A1–A3 y B1–B6 siguen en archivos. |
 | 6 | 14/11/2026 | Claude | Proponer la v4 con defensas adicionales y 6 ataques (E5). | Contra este modelo v3 ya resistía 6/6; la v4 también. | Aceptada la v4 por su defensa independiente del modelo (capa 1 y 3 en código); **no** se afirma mejora medida en el modelo. |
+| 7 | 15/11/2026 | Subagentes de Copilot | Ejecutar v4 tres veces sobre H1, H7 y H9, con un subagente independiente por combinación. Modelo: no informado. | H1 y H7 pasaron las tres corridas; H9 falló A1 y A2 en las tres y A6 en run3. Cada corrida obtuvo 2/3 (66,7 %), con variaciones de texto. | Aceptada como evidencia de no determinismo; las respuestas se conservaron sin editar y no se inventaron corridas. |
 
 ## Prompts completos usados con el asistente
 

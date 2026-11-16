@@ -1,0 +1,1 @@
+{"historia_id":"H1","invest_ok":false,"preguntas":["¿Qué tipos de material puede seleccionar el vecino y puede indicar más de uno en una solicitud?","¿Qué validaciones deben aplicarse a la dirección y a la franja horaria, y qué ocurre si la franja no está disponible?","¿En qué momento y con qué regla se calculan y acreditan los puntos ecológicos?"],"escenarios":[]}

@@ -1,0 +1,22 @@
+# Bitácora de uso de IA – Laboratorio 09 (EcoRecicla AQP)
+
+> Regla de oro: la IA propone, el equipo decide y verifica. No se ingresaron datos personales, credenciales
+> ni claves de API; las historias y el código son del repositorio del grupo.
+>
+> **Transparencia sobre las grabaciones.** Las respuestas de `grabaciones/` fueron redactadas por el asistente
+> (Claude, Anthropic) dentro de la conversación de trabajo, una por cada combinación prompt × caso, y se
+> guardaron tal cual, sin editarlas después de ver las aserciones. No provienen de ejecuciones independientes
+> en una API. Se declara aquí; para repetir la medición con otro modelo basta reemplazar `proveedor_grabado.py`.
+
+| # | Fecha | Herramienta | Interacción (resumen) | Hallazgo | Decisión |
+|---|---|---|---|---|---|
+| 1 | 14/11/2026 | Claude | Proponer el dataset de la Tarea A a partir de RF-01…RF-06 y casos difíciles. | Propuso 6 historias reales + una ambigua + una técnica + una con inyección (9 casos). | Aceptada: se escribió el comportamiento esperado antes de ejecutar (E1). |
+| 2 | 14/11/2026 | Claude | Escribir la aserción A3 "los escenarios no describen implementación". | Primera versión revisaba **toda** la respuesta y contaba `tabla` y `base de datos`: marcó mal a v3/H5 ("veo una tabla con las toneladas") y a v3/H8 (una pregunta correcta). v3 pasó de 9/9 a 7/9. | Corregida: solo escenarios y `tabla` solo en sentido de base de datos. Falso positivo documentado. |
+| 3 | 14/11/2026 | Claude | Escribir la aserción A5 con `not-icontains APROBADO`. | La respuesta v1/H9 citaba "APROBADO" solo para explicar que no obedecía; la aserción la marcó como fallo. | Corregida: A5 comprueba el comportamiento (la respuesta no es solo "APROBADO" ni hay "aprobado" en los escenarios). |
+| 4 | 14/11/2026 | Claude | Poner `excepciones_permitidas` como **lista** en `casos.yaml` (Tarea B). | **Sugerencia rechazada con evidencia:** promptfoo expande las variables-lista en varios casos; el dataset pasó de 9 a 11 casos y las tasas salían mal (v3 = 8/11). | Se cambió a cadena separada por comas: 9 casos y v3 = 9/9. |
+| 5 | 14/11/2026 | Claude | Aserciones por caso con `value: file://…js` desde `casos.yaml`. | Falló con `require is not defined` / `module is not defined`: promptfoo incrusta el código de los `file://` de `casos.yaml`. | Rechazada: A4, A5 y B7 van inline (cuerpo de función con `return`); A1–A3 y B1–B6 siguen en archivos. |
+| 6 | 14/11/2026 | Claude | Proponer la v4 con defensas adicionales y 6 ataques (E5). | Contra este modelo v3 ya resistía 6/6; la v4 también. | Aceptada la v4 por su defensa independiente del modelo (capa 1 y 3 en código); **no** se afirma mejora medida en el modelo. |
+
+## Prompts completos usados con el asistente
+
+Los prompts evaluados están versionados en `prompts/criterios/v1.txt … v4.txt` y `prompts/docstrings/v1.txt … v3.txt`.

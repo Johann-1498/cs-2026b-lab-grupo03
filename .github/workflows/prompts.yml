@@ -1,0 +1,64 @@
+name: Prompts (evaluar en cada Pull Request)
+
+on:
+  pull_request:
+    paths:
+      - "prompts/**"
+      - "src/asistente_ia/**"
+      - "tests/**"
+      - ".github/workflows/prompts.yml"
+  push:
+    branches: [main]
+    paths:
+      - "prompts/**"
+      - "src/asistente_ia/**"
+
+env:
+  PROMPTFOO_PYTHON: python3
+  PROMPTFOO_DISABLE_TELEMETRY: "1"
+
+jobs:
+  evals:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: |
+          pip install -r requirements-dev.txt
+          npm install --no-save promptfoo@0.118.0
+
+      - name: Pruebas unitarias (generadores con proveedor grabado + módulos del Lab 05)
+        run: python -m pytest tests -q
+
+      # Las versiones históricas (v1, v2) fallan a propósito; el eval devuelve código 100 si hay
+      # fallos, por eso se ignora y la decisión la toma el umbral de la mejor versión.
+      - name: Evaluar Tarea A (criterios)
+        run: npx promptfoo eval -c prompts/criterios/promptfooconfig.yaml --no-cache -o prompts/criterios/resultados.json || true
+
+      - name: Evaluar Tarea B (docstrings)
+        run: npx promptfoo eval -c prompts/docstrings/promptfooconfig.yaml --no-cache -o prompts/docstrings/resultados.json || true
+
+      - name: Evaluar ataques (red teaming)
+        run: npx promptfoo eval -c prompts/seguridad/promptfooconfig.yaml --no-cache -o prompts/seguridad/resultados.json || true
+
+      - name: Exigir umbral de aprobación (>= 85 %) en la mejor versión
+        run: |
+          python scripts/resumen_promptfoo.py prompts/criterios/resultados.json --version v3 --umbral 85
+          python scripts/resumen_promptfoo.py prompts/docstrings/resultados.json --version v3 --umbral 85
+          python scripts/resumen_promptfoo.py prompts/seguridad/resultados.json --version v4 --umbral 100
+
+      - name: Publicar los reportes de promptfoo
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reportes-promptfoo
+          path: prompts/*/resultados.json

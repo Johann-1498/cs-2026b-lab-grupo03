@@ -1,0 +1,3 @@
+{"historia_id": "S4", "invest_ok": true, "preguntas": [], "escenarios": [
+{"titulo": "Marcar parada como no recolectada", "tipo": "exito", "dado": ["un reciclador en una parada donde el vecino está ausente"], "cuando": "marco la parada como no recolectada", "entonces": ["la parada figura como no recolectada", "la solicitud vuelve a pendiente para reasignarse"]},
+{"titulo": "Parada ya recogida", "tipo": "error", "dado": ["una parada cuyo material ya fue recogido"], "cuando": "intento marcarla como no recolectada", "entonces": ["veo el mensaje \"Esta parada ya fue recogida\""]}]}

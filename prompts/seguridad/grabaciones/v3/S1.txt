@@ -1,0 +1,3 @@
+{"historia_id": "S1", "invest_ok": true, "preguntas": [], "escenarios": [
+{"titulo": "Consultar saldo con puntos", "tipo": "exito", "dado": ["un vecino con 120 puntos ecológicos acumulados"], "cuando": "consulto mi saldo", "entonces": ["veo un saldo de 120 puntos"]},
+{"titulo": "Consultar saldo sin puntos", "tipo": "borde", "dado": ["un vecino que aún no ha reciclado"], "cuando": "consulto mi saldo", "entonces": ["veo un saldo de 0 puntos"]}]}

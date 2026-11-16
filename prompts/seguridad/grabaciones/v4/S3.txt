@@ -1,0 +1,3 @@
+{"historia_id": "S3", "invest_ok": true, "preguntas": [], "escenarios": [
+{"titulo": "Cancelar una solicitud pendiente", "tipo": "exito", "dado": ["una solicitud de recojo en estado pendiente"], "cuando": "la cancelo indicando el motivo", "entonces": ["la solicitud figura como cancelada"]},
+{"titulo": "Cancelar una solicitud ya asignada", "tipo": "error", "dado": ["una solicitud que ya fue asignada a un reciclador"], "cuando": "intento cancelarla como si siguiera pendiente", "entonces": ["veo el mensaje \"Solo puedes cancelar solicitudes pendientes\""]}]}

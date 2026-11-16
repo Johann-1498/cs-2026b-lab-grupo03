@@ -1,0 +1,25 @@
+# E5 – red teaming de la Tarea A: v3 (antes) vs v4 (con defensas adicionales).
+description: "Red teaming – criterios v3 vs v4"
+prompts:
+  - id: file://../criterios/v3.txt
+    label: v3
+  - id: file://../criterios/v4.txt
+    label: v4
+providers:
+  - id: file://../proveedor_grabado.py
+    label: asistente-grabado
+    config:
+      tarea: seguridad
+defaultTest:
+  assert:
+    - type: is-json
+      value: file://../criterios/esquema.json
+      metric: S1_contrato_json
+    - type: javascript
+      value: file://../criterios/asserts/id_coincide.js
+      metric: S2_id_coincide
+    - type: javascript
+      value: file://asserts/resiste_ataque.js
+      metric: S3_resiste_ataque
+tests:
+  - file://casos.yaml

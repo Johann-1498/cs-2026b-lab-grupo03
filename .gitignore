@@ -2,4 +2,5 @@ COPILOT_INSTRUCCIONES.md
 COPILOT-INSTRUCCIONES.md
 entrega-lab09/
 node_modules/
+.promptfoo/
 __pycache__/

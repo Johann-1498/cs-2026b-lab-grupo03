@@ -209,12 +209,12 @@ combinamos la lista oficial de c4model.com con un verificador automático y mant
 
 ## Prompt engineering (Lab 09)
 
-### Línea base (E2)
+### Tarea A: versiones y tasas (E2–E3)
 
-Tarea A (criterios Gherkin), prompt `v1` ingenuo, 9 casos, evaluado con promptfoo 0.118 y respuestas grabadas:
+| Versión | Cambio | Aprobación |
+|---|---|---|
+| v1 | Prompt ingenuo | 0/9 = **0,0 %** |
+| v2 | Rol, contexto y formato JSON | 3/9 = **33,3 %** |
+| v3 | Tarea paso a paso (INVEST), restricciones, ejemplo, datos delimitados | 9/9 = **100 %** |
 
-| Versión | Aprobación |
-|---|---|
-| v1 | 0/9 = **0,0 %** |
-
-Las respuestas de `grabaciones/v1/` no se editan. Reproducir: `PROMPTFOO_PYTHON=python3 npx promptfoo@0.118.0 eval -c prompts/criterios/promptfooconfig.yaml --no-cache`.
+Evaluadores corregidos (A3 y A5, falsos positivos): con las aserciones iniciales v3 sacaba 7/9. Detalle en el README final.

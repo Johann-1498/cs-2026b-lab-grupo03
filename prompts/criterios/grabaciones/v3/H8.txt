@@ -1,0 +1,1 @@
+{"historia_id": "H8", "invest_ok": false, "preguntas": ["¿Qué necesidad del vecino, del reciclador o de la Municipalidad se ve afectada hoy por la base de datos actual?", "¿Qué comportamiento observable debería cambiar o mejorar para un usuario tras la migración a PostgreSQL?"], "escenarios": []}

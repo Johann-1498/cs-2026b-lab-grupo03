@@ -1,0 +1,23 @@
+```json
+{
+  "historia_id": "H3",
+  "invest_ok": true,
+  "preguntas": [],
+  "escenarios": [
+    {
+      "titulo": "Confirmar recojo con pesaje",
+      "tipo": "exito",
+      "dado": ["que soy un reciclador con una solicitud asignada"],
+      "cuando": "confirmo el recojo y registro 3 kg de plástico y 2 kg de vidrio",
+      "entonces": ["la solicitud queda pesada", "el vecino recibe los puntos correspondientes"]
+    },
+    {
+      "titulo": "Peso inválido",
+      "tipo": "error",
+      "dado": ["que soy un reciclador con una solicitud asignada"],
+      "cuando": "registro un peso de 0 kg",
+      "entonces": ["veo un mensaje de error", "el pesaje no se registra"]
+    }
+  ]
+}
+```

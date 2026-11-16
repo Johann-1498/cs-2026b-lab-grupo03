@@ -1,0 +1,3 @@
+{"historia_id": "H6", "invest_ok": true, "preguntas": ["¿Un distrito puede registrarse sin ningún sector de cobertura?"], "escenarios": [
+{"titulo": "Distrito nuevo con sectores", "tipo": "exito", "dado": ["un administrador municipal y el distrito de Paucarpata, que aún no está registrado"], "cuando": "registro Paucarpata con los sectores Norte y Sur", "entonces": ["el distrito figura con cobertura activa", "los vecinos de Paucarpata pueden solicitar recojos"]},
+{"titulo": "Distrito ya registrado", "tipo": "error", "dado": ["el distrito de Cayma ya registrado"], "cuando": "intento registrar otro distrito llamado Cayma", "entonces": ["veo el mensaje \"El distrito ya está registrado\"", "no se crea un segundo distrito"]}]}

@@ -1,0 +1,3 @@
+```json
+{"historia_id": "H5", "invest_ok": true, "preguntas": [], "escenarios": [{"titulo": "Descargar reporte por distrito", "tipo": "exito", "dado": ["que soy administrador municipal y existen recojos en Yanahuara durante octubre"], "cuando": "descargo el reporte de toneladas de Yanahuara del 1 al 31 de octubre", "entonces": ["obtengo el reporte con las toneladas por tipo de material"]}, {"titulo": "Rango sin recojos", "tipo": "borde", "dado": ["que no hubo recojos en el rango de fechas elegido"], "cuando": "descargo el reporte", "entonces": ["el reporte muestra 0 toneladas en cada tipo de material"]}]}
+```

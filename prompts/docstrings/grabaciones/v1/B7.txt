@@ -1,0 +1,8 @@
+```python
+def listar_materiales() -> list[str]:
+    """Lista los tipos de material reciclable.
+
+    Returns:
+        Valores de TipoMaterial: "PLASTICO", "PAPEL_CARTON", "VIDRIO" y "METAL".
+    """
+```

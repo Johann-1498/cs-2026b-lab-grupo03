@@ -1,0 +1,37 @@
+# Tarea B – docstrings y documentación de una función (EcoRecicla AQP). Desde la raíz del repo:
+#   PROMPTFOO_PYTHON=python3 npx promptfoo@0.118.0 eval -c prompts/docstrings/promptfooconfig.yaml --no-cache
+description: "Tarea B – docstrings y documentación de una función (EcoRecicla AQP)"
+prompts:
+  - id: file://v1.txt
+    label: v1
+  - id: file://v2.txt
+    label: v2
+  - id: file://v3.txt
+    label: v3
+providers:
+  - id: file://../proveedor_grabado.py
+    label: asistente-grabado
+    config:
+      tarea: docstrings
+defaultTest:
+  assert:
+    - type: is-json                       # B1: contrato de salida
+      value: file://esquema.json
+      metric: B1_contrato_json
+    - type: javascript                    # B2 (clave): documenta TODOS los parámetros
+      value: file://asserts/todos_los_parametros.js
+      metric: B2_todos_los_parametros
+    - type: javascript                    # B3 (clave): NO describe parámetros inexistentes
+      value: file://asserts/sin_parametros_inventados.js
+      metric: B3_sin_parametros_inventados
+    - type: javascript                    # B4: docstring coherente con la firma
+      value: file://asserts/docstring_coherente.js
+      metric: B4_docstring_coherente
+    - type: javascript                    # B5: sin excepciones inventadas
+      value: file://asserts/sin_excepciones_inventadas.js
+      metric: B5_sin_excepciones_inventadas
+    - type: javascript                    # B6: retorno coherente
+      value: file://asserts/retorno_coherente.js
+      metric: B6_retorno_coherente
+tests:
+  - file://casos.yaml

@@ -1,0 +1,8 @@
+**Criterios de aceptación – Registrar distrito nuevo**
+
+1. El administrador puede abrir el formulario de registro de distrito.
+2. El formulario permite ingresar el nombre del distrito y agregar uno o más sectores de cobertura.
+3. No se permite registrar dos distritos con el mismo nombre.
+4. Al guardar, el distrito queda activo y aparece en la lista de distritos con cobertura.
+5. Los vecinos de ese distrito pueden crear solicitudes de recojo.
+6. Los datos del distrito se almacenan de forma persistente.

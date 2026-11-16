@@ -1,0 +1,8 @@
+### Criterios de aceptación
+
+- El reciclador puede confirmar el recojo de una solicitud que tiene asignada.
+- Al confirmar, puede ingresar el peso en kilogramos de cada tipo de material (plástico, papel/cartón, vidrio, metal).
+- El sistema valida que los pesos sean números mayores que cero.
+- Los datos del pesaje se guardan en la base de datos asociados a la solicitud.
+- Con el pesaje registrado, el sistema calcula los puntos según la regla del distrito y los acredita al vecino.
+- El vecino recibe una notificación con los puntos obtenidos.

@@ -1,0 +1,16 @@
+## Criterios de aceptación – Solicitar recojo de reciclables
+
+**Escenario 1: Solicitud exitosa**
+- **Dado** que soy un vecino con sesión iniciada
+- **Cuando** selecciono el tipo de material, ingreso mi dirección y elijo una franja horaria
+- **Entonces** el sistema registra mi solicitud y me muestra una confirmación
+
+**Escenario 2: Datos incompletos**
+- **Dado** que estoy en el formulario de solicitud
+- **Cuando** dejo vacío el tipo de material o la dirección
+- **Entonces** el sistema me indica qué campos faltan y no registra la solicitud
+
+**Escenario 3: Asignación**
+- **Dado** que mi solicitud fue registrada
+- **Cuando** hay un reciclador formalizado disponible
+- **Entonces** se le asigna la solicitud y recibo una notificación

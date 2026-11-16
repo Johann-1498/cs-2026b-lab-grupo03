@@ -1,0 +1,8 @@
+**Criterios de aceptación – Ruta del día del reciclador**
+
+1. El reciclador puede ver su ruta del día al iniciar sesión.
+2. Las paradas se muestran ordenadas.
+3. Cada parada muestra la dirección y el estado de la solicitud (pendiente, completada o no recolectada).
+4. Si no hay paradas asignadas, se muestra un mensaje informativo.
+5. La ruta se actualiza cuando cambia el estado de una solicitud.
+6. La consulta debe funcionar con conexión móvil lenta.

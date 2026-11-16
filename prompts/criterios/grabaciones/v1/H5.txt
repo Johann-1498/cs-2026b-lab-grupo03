@@ -1,0 +1,12 @@
+## Criterios de aceptación: Reporte de toneladas recicladas
+
+**Dado** que soy administrador municipal con sesión iniciada
+**Cuando** selecciono distrito, tipo de material y un rango de fechas
+**Entonces** puedo generar el reporte con las toneladas recicladas
+
+Criterios adicionales:
+- El reporte puede descargarse en PDF o Excel.
+- Los totales se expresan en toneladas métricas con dos decimales.
+- Si no hay datos en el rango, el reporte indica que no hubo recojos.
+- Solo los administradores municipales pueden acceder al reporte.
+- La descarga debe tardar menos de 10 segundos.

@@ -1,0 +1,8 @@
+**Criterios de aceptación**
+
+1. Todas las tablas del sistema se migran a PostgreSQL sin pérdida de datos.
+2. Cada módulo (solicitudes, rutas, puntos, reportes y distritos) tiene su propio esquema dentro de la base de datos.
+3. No existen claves foráneas entre tablas de esquemas distintos, según el ADR-002.
+4. Los módulos acceden a sus datos únicamente a través de su propio esquema.
+5. Las pruebas automatizadas existentes pasan sin cambios tras la migración.
+6. Existe un script de migración reversible y documentado.

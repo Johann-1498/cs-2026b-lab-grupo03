@@ -206,3 +206,15 @@ La IA redactó rápido el borrador del modelo, pero necesitó verificación: `st
 exportador dibujó los sistemas externos como propios y la revisión con la lista oficial encontró etiquetas vagas ("Usa"). Como auditora, la IA
 marcó dos falsos positivos (un "ciclo" entre `solicitudes` y `rutas` y un supuesto error de alcance en la vista de componentes). Por eso
 combinamos la lista oficial de c4model.com con un verificador automático y mantuvimos la regla: la IA propone; el equipo decide y verifica.
+
+## Prompt engineering (Lab 09)
+
+### Línea base (E2)
+
+Tarea A (criterios Gherkin), prompt `v1` ingenuo, 9 casos, evaluado con promptfoo 0.118 y respuestas grabadas:
+
+| Versión | Aprobación |
+|---|---|
+| v1 | 0/9 = **0,0 %** |
+
+Las respuestas de `grabaciones/v1/` no se editan. Reproducir: `PROMPTFOO_PYTHON=python3 npx promptfoo@0.118.0 eval -c prompts/criterios/promptfooconfig.yaml --no-cache`.

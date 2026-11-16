@@ -1,0 +1,13 @@
+Aquí van criterios de aceptación medibles para esta historia:
+
+1. **Rapidez**
+   - La pantalla de ruta del día carga en menos de 3 segundos con conexión 3G.
+   - Registrar un pesaje y ver la confirmación toma menos de 2 segundos.
+2. **Facilidad de uso**
+   - Un reciclador nuevo puede registrar un pesaje sin capacitación en menos de 2 minutos.
+   - Registrar un pesaje requiere como máximo 4 toques en pantalla.
+   - Los botones principales tienen un tamaño mínimo de 48 px y buen contraste bajo luz solar.
+3. **Campo**
+   - Los datos ingresados sin conexión se guardan y se sincronizan al recuperar la señal.
+
+Si quieres, puedo convertirlos a formato Gherkin.

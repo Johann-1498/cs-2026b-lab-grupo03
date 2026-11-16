@@ -1,0 +1,8 @@
+Criterios de aceptación:
+
+1. El vecino puede ver su saldo actual de puntos ecológicos.
+2. El vecino puede ver el historial de puntos, con fecha, solicitud y cantidad acreditada.
+3. El vecino puede ver los beneficios municipales disponibles y su costo en puntos.
+4. Al canjear un beneficio, el saldo se descuenta inmediatamente.
+5. Si el saldo no alcanza, el sistema muestra un mensaje de saldo insuficiente.
+6. El canje queda registrado en el historial.

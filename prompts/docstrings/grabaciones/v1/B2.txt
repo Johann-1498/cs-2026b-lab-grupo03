@@ -1,0 +1,24 @@
+```python
+def solicitar_recojo(self, vecino_id, distrito_id, direccion, franja, materiales, latitud=Decimal("0"), longitud=Decimal("0")) -> Solicitud:
+    """Registra una solicitud de recojo de reciclables.
+
+    Valida que haya al menos un material y que el distrito tenga cobertura.
+    Si es válida, guarda la solicitud como PENDIENTE, intenta asignar un
+    reciclador y, si hay uno disponible, la marca como ASIGNADA y notifica.
+
+    Args:
+        vecino_id: Vecino que solicita el recojo.
+        distrito_id: Distrito de la dirección.
+        direccion: Dirección del domicilio.
+        franja: Franja horaria preferida.
+        materiales: Materiales declarados con su peso estimado.
+        latitud: Latitud del domicilio (0 por defecto).
+        longitud: Longitud del domicilio (0 por defecto).
+
+    Returns:
+        La solicitud creada.
+
+    Raises:
+        SolicitudInvalida: Si el distrito no tiene cobertura o no hay materiales.
+    """
+```

@@ -1,0 +1,21 @@
+Aquí tienes un docstring para la función:
+
+```python
+def acreditar(
+    self, vecino_id: UUID, distrito_id: UUID, solicitud_id: UUID, pesajes: list[Pesaje]
+) -> int:
+    """Acredita puntos ecológicos a un vecino por una solicitud de recojo.
+
+    Busca la regla de puntos aplicable al distrito (la más específica gana),
+    calcula los puntos a partir de los pesajes y los suma a la cuenta del vecino.
+
+    Args:
+        vecino_id: Identificador del vecino que recibe los puntos.
+        distrito_id: Distrito donde se hizo el recojo.
+        solicitud_id: Solicitud que origina el acreditamiento.
+        pesajes: Lista de pesajes reales (tipo de material y kg).
+
+    Returns:
+        Cantidad de puntos acreditados.
+    """
+```
